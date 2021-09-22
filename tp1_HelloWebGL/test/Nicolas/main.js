@@ -107,7 +107,16 @@ function main() {
     // definition en tant que buffer courant
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     // on definit un tableau de points
-    let vertices = new Float32Array([ 1,1,1,-1,-1,-1 ]);
+    let vertices = new Float32Array([
+        1, 1, 0,
+        -1, 1, 0,
+        -1, 1, 0,
+        -1, -1, 0,
+        -1, -1, 0,
+        1, -1, 0,
+        1, -1, 0,
+        1, 1, 0
+    ]);
     // on met ces valeurs dans le buffer courant
     gl.bufferData(gl.ARRAY_BUFFER, vertices,
         gl.STATIC_DRAW);
@@ -123,7 +132,7 @@ function main() {
     gl.uniformMatrix4fv(shaderProjectionMatrixUniform, false, projectionMatrix);
     gl.uniformMatrix4fv(shaderModelViewMatrixUniform, false, modelViewMatrix);
 
-    gl.drawArrays(gl.LINES, 0, 2);
+    gl.drawArrays(gl.LINES, 0, 8);
 }
 
 main();
