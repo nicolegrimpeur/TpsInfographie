@@ -1,0 +1,21 @@
+#canvaWebGl {
+    height: 100vh;
+    width: 100%;
+}
+
+body {
+    margin: 0;
+    overflow: hidden;
+}
+
+input {
+    width: 5vw;
+}
+
+select {
+    width: 5vw;
+}
+
+form {
+    height: 16vh;
+}

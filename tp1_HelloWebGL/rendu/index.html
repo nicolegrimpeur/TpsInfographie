@@ -2,9 +2,98 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Test WebGl</title>
+    <link rel="stylesheet" href="index.css">
+    <script src="../../../node_modules/three/build/three.min.js"></script>
+    <script src="https://www.khronos.org/registry/webgl/sdk/demos/common/webgl-utils.js"></script>
 </head>
 <body>
+<!--<canvas id="canvaWebGl"></canvas>-->
+<form id="form">
+    x(t) = <input name="xCte1" value="1"> *
+    <select name="x1">
+        <option value=""></option>
+        <option value="cos">cos(t)</option>
+        <option value="sin" selected>sin(t)</option>
+        <option value="t">t</option>
+        <option value="pi">pi</option>
+    </select>
+    ^ <input name="xPuissance1" value="3"> + <input name="xCte2" value="0"> *
+    <select name="x2">
+        <option value=""></option>
+        <option value="cos">cos(t)</option>
+        <option value="sin" selected>sin(t)</option>
+        <option value="t">t</option>
+        <option value="pi">pi</option>
+    </select>
+    ^ <input name="xPuissance2" value="1"> + <input name="xCte3" value="0"> *
+    <select name="x3">
+        <option value=""></option>
+        <option value="cos">cos(t)</option>
+        <option value="sin">sin(t)</option>
+        <option value="t" selected>t</option>
+        <option value="pi">pi</option>
+    </select>
+    ^ <input name="xPuissance3" value="1"> + <input name="xCte4" value="0"> *
+    <select name="x4">
+        <option value=""></option>
+        <option value="cos">cos(t)</option>
+        <option value="sin">sin(t)</option>
+        <option value="t">t</option>
+        <option value="pi" selected>pi</option>
+    </select>
+    ^ <input name="xPuissance4" value="1"><br>
 
+<!--    Si fonction paramétrique, -->
+    y(t) = <input name="yCte1" value="1"> *
+    <select name="y1">
+        <option value=""></option>
+        <option value="cos" selected>cos(t)</option>
+        <option value="sin">sin(t)</option>
+        <option value="t">t</option>
+        <option value="pi">pi</option>
+    </select>
+    ^ <input name="yPuissance1" value="1"> + <input name="yCte2" value="-1"> *
+    <select name="y2">
+        <option value=""></option>
+        <option value="cos" selected>cos(t)</option>
+        <option value="sin">sin(t)</option>
+        <option value="t">t</option>
+        <option value="pi">pi</option>
+    </select>
+    ^ <input name="yPuissance2" value="4"> + <input name="yCte3" value="0"> *
+    <select name="y3">
+        <option value=""></option>
+        <option value="cos">cos(t)</option>
+        <option value="sin">sin(t)</option>
+        <option value="t" selected>t</option>
+        <option value="pi">pi</option>
+    </select>
+    ^ <input name="yPuissance3" value="1"> + <input name="yCte4" value="0"> *
+    <select name="y4">
+        <option value=""></option>
+        <option value="cos">cos(t)</option>
+        <option value="sin">sin(t)</option>
+        <option value="t">t</option>
+        <option value="pi" selected>pi</option>
+    </select>
+    ^ <input name="yPuissance4" value="1"> <br>
+
+    Intervalle min = <input name="min" value="0"> + <input name="minPi" value="0"> * pi; max = <input name="max" value="0"> + <input name="maxPi" value="2"> * pi<br>
+<!--    rajouter intervalle d'affichage-->
+    Précision : <input name="precision" value="0.001"> <br>
+    <input id="submit" type="button" value="Dessiner" style="width: inherit">
+</form>
+
+<script src="main.js"></script>
+
+<script>
+    let form = document.getElementById('form');
+    let submit = document.getElementById('submit');
+
+    submit.addEventListener('click', () => {
+        main(form);
+    });
+</script>
 </body>
 </html>
