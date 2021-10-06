@@ -1,13 +1,10 @@
-#canvaWebGl {
-    height: 100vh;
-    width: 100%;
-}
-
 body {
     margin: 0;
+    /* cache la barre pour descendre la page */
     overflow: hidden;
 }
 
+/* taille des éléments html */
 input {
     width: 5vw;
 }
