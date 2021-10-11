@@ -4,93 +4,132 @@
     <meta charset="UTF-8">
     <title>Test WebGl</title>
     <link rel="stylesheet" href="index.css">
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
     <script src="../../../node_modules/three/build/three.min.js"></script>
 </head>
 <body>
 <form id="form">
-    <!-- fonction paramétrique de x(t) -->
-    x(t) = <input name="xCte1" value="1"> *
+    <div class="DivVal">
+        <div>
+        <!-- fonction paramétrique de x(t) -->
+        x(t) =  <input type="text" class="caseDonnee" name="xCte1"  value="1"> *
+            <select name="x1">
+                <option value=""></option>
+                <option value="cos">cos(t)</option>
+                <option value="sin" selected>sin(t)</option>
+                <option value="t">t</option>
+                <option value="pi">pi</option>
+            </select>
+            ^ <input name="xPuissance1" class="caseDonnee"  value="3">
+            + <input class="caseDonnee"  name="xCte2" value="0"> *
+            <select name="x2">
+                <option value=""></option>
+                <option value="cos">cos(t)</option>
+                <option value="sin" selected>sin(t)</option>
+                <option value="t">t</option>
+                <option value="pi">pi</option>
+            </select>
+            ^ <input name="xPuissance2" class="caseDonnee"  value="1">
+        </div>
+        <br>
+        <div>
+            &emsp; + <input class="caseDonnee"  name="xCte3" value="0"> *
+            <select name="x3">
+                <option value=""></option>
+                <option value="cos">cos(t)</option>
+                <option value="sin">sin(t)</option>
+                <option value="t" selected>t</option>
+                <option value="pi">pi</option>
+            </select>
+            ^ <input name="xPuissance3" class="caseDonnee"  value="1">
+            + <input class="caseDonnee"  name="xCte4" value="0"> *
+            <select name="x4">
+                <option value=""></option>
+                <option value="cos">cos(t)</option>
+                <option value="sin">sin(t)</option>
+                <option value="t">t</option>
+                <option value="pi" selected>pi</option>
+            </select>
+            ^ <input name="xPuissance4" class="caseDonnee"  value="1">
+        </div>
+    </div>
 <!-- à faire optimisation des selects -> possible de le faire en javascript avec un document.querySelectorAll -->
-    <select name="x1">
-        <option value=""></option>
-        <option value="cos">cos(t)</option>
-        <option value="sin" selected>sin(t)</option>
-        <option value="t">t</option>
-        <option value="pi">pi</option>
-    </select>
-    ^ <input name="xPuissance1" value="3"> + <input name="xCte2" value="0"> *
-    <select name="x2">
-        <option value=""></option>
-        <option value="cos">cos(t)</option>
-        <option value="sin" selected>sin(t)</option>
-        <option value="t">t</option>
-        <option value="pi">pi</option>
-    </select>
-    ^ <input name="xPuissance2" value="1"> + <input name="xCte3" value="0"> *
-    <select name="x3">
-        <option value=""></option>
-        <option value="cos">cos(t)</option>
-        <option value="sin">sin(t)</option>
-        <option value="t" selected>t</option>
-        <option value="pi">pi</option>
-    </select>
-    ^ <input name="xPuissance3" value="1"> + <input name="xCte4" value="0"> *
-    <select name="x4">
-        <option value=""></option>
-        <option value="cos">cos(t)</option>
-        <option value="sin">sin(t)</option>
-        <option value="t">t</option>
-        <option value="pi" selected>pi</option>
-    </select>
-    ^ <input name="xPuissance4" value="1"><br>
-
-
     <!-- fonction paramétrique de y(t) -->
-    y(t) = <input name="yCte1" value="1"> *
-    <select name="y1">
-        <option value=""></option>
-        <option value="cos" selected>cos(t)</option>
-        <option value="sin">sin(t)</option>
-        <option value="t">t</option>
-        <option value="pi">pi</option>
-    </select>
-    ^ <input name="yPuissance1" value="1"> + <input name="yCte2" value="-1"> *
-    <select name="y2">
-        <option value=""></option>
-        <option value="cos" selected>cos(t)</option>
-        <option value="sin">sin(t)</option>
-        <option value="t">t</option>
-        <option value="pi">pi</option>
-    </select>
-    ^ <input name="yPuissance2" value="4"> + <input name="yCte3" value="0"> *
-    <select name="y3">
-        <option value=""></option>
-        <option value="cos">cos(t)</option>
-        <option value="sin">sin(t)</option>
-        <option value="t" selected>t</option>
-        <option value="pi">pi</option>
-    </select>
-    ^ <input name="yPuissance3" value="1"> + <input name="yCte4" value="0"> *
-    <select name="y4">
-        <option value=""></option>
-        <option value="cos">cos(t)</option>
-        <option value="sin">sin(t)</option>
-        <option value="t">t</option>
-        <option value="pi" selected>pi</option>
-    </select>
-    ^ <input name="yPuissance4" value="1"> <br>
+    <div class="DivVal">
+        <div>
+            y(t) = <input name="yCte1" class="caseDonnee" value="1"> *
+            <select name="y1">
+                <option value=""></option>
+                <option value="cos" selected>cos(t)</option>
+                <option value="sin">sin(t)</option>
+                <option value="t">t</option>
+                <option value="pi">pi</option>
+            </select>
+            ^ <input name="yPuissance1" class="caseDonnee" value="1">
+            + <input name="yCte2" class="caseDonnee" value="-1"> *
+            <select name="y2">
+                <option value=""></option>
+                <option value="cos" selected>cos(t)</option>
+                <option value="sin">sin(t)</option>
+                <option value="t">t</option>
+                <option value="pi">pi</option>
+            </select>
+            ^ <input name="yPuissance2" class="caseDonnee" value="4">
+        </div>
+        <br>
+        <div>
+            &emsp; + <input name="yCte3" class="caseDonnee" value="0"> *
+            <select name="y3">
+                <option value=""></option>
+                <option value="cos">cos(t)</option>
+                <option value="sin">sin(t)</option>
+                <option value="t" selected>t</option>
+                <option value="pi">pi</option>
+            </select>
+            ^ <input name="yPuissance3" class="caseDonnee" value="1">
+            + <input name="yCte4" class="caseDonnee" value="0"> *
+            <select name="y4">
+                <option value=""></option>
+                <option value="cos">cos(t)</option>
+                <option value="sin">sin(t)</option>
+                <option value="t">t</option>
+                <option value="pi" selected>pi</option>
+            </select>
+            ^ <input name="yPuissance4" class="caseDonnee" value="1">
+        </div>
 
     <!-- permet de changer l'intervalle sur laquelle sera appliqué la fonction paramétrique -->
-    Intervalle min = <input name="min" value="0"> + <input name="minPi" value="0"> * pi; max = <input name="max" value="0"> + <input name="maxPi" value="2"> * pi<br>
-<!-- à faire rajouter intervalle d'affichage-->
-    Précision : <input name="precision" value="0.001"> <br>
+        <div class="DivVal">
+            <div>
+                Intervalle min = <input name="min" class="caseDonnee" value="0">
+                + <input name="minPi" class="caseDonnee" value="0">
+                * pi; max = <input class="caseDonnee" name="max" value="0">
+                + <input name="maxPi" class="caseDonnee" value="2"> * pi<br>
+                <!-- à faire rajouter intervalle d'affichage-->
+                <br>
+                Précision : <input name="precision" id="casePrecis" class="caseDonnee" value="0.001"> <br>
 
-    <input id="submit" type="button" value="Dessiner" style="width: inherit">
+                <!-- à faire, permettre à l'utilisateur de choisir parmis une sélection de formes -->
+                <!-- possible de le faire depuis javascript en modifiant toutes les cases du formulaire pour faire la forme demandé -->
+                <br>
+                Forme préprogrammé : <select name="formepreload">
+                    <option value=""selected></option>
+                    <option value="coeur">coeur</option>
+                    <option value="rond">rond</option>
+                    <option value="rectangle" >rectangle</option>
+                    <option value="triangle">triangle</option>
+                </select>
+            </div>
 
-    <!-- à faire, permettre à l'utilisateur de choisir parmis une sélection de formes -->
-    <!-- possible de le faire depuis javascript en modifiant toutes les cases du formulaire pour faire la forme demandé -->
+            <input id="submit" type="button" class="btn btn-primary" value="Dessiner" >
 
 </form>
+
+<div id="blanc">
+
+</div>
 
 <script src="main.js"></script>
 
