@@ -111,8 +111,7 @@
                 <br>
                 Précision : <input name="precision" id="casePrecis" class="caseDonnee" value="0.001"> <br>
 
-                <!-- à faire, permettre à l'utilisateur de choisir parmis une sélection de formes -->
-                <!-- possible de le faire depuis javascript en modifiant toutes les cases du formulaire pour faire la forme demandé -->
+                <!-- permet à l'utilisateur de choisir parmis une sélection de formes -->
                 <br>
                 Forme préprogrammé : <select id="preload" name="formepreload">
                     <option value=""selected></option>
@@ -140,7 +139,7 @@
     let form = document.getElementById('form');
     let submit = document.getElementById('submit');
 
-    // bouton load figure préchargé
+    // on récupère le bouton pour appliquer un évènement load de figure préchargé
     let load = document.getElementById('preload');
 
     // lancer la fonction au click sur le bouton de sélection

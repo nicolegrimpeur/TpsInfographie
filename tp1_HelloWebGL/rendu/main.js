@@ -81,6 +81,7 @@ function manageSelect(value, i) {
 }
 
 
+// gère les figures pre enregistrer et met les bonnes valeurs dans les cases html
 function managePreSelect(form) {
 
     let selection = form.formepreload.value;
@@ -116,7 +117,7 @@ function managePreSelect(form) {
             form.minPi.value = "0";
             form.max.value = "0";
             form.maxPi.value = "2";
-            form.precision.value = "0,001";
+            form.precision.value = "0.001";
             return 0;
 
         case "rond":
@@ -150,7 +151,7 @@ function managePreSelect(form) {
             form.minPi.value = "0";
             form.max.value = "0";
             form.maxPi.value = "2";
-            form.precision.value = "0,001";
+            form.precision.value = "0.001";
             return 0;
 
         case "astroïde":
@@ -184,7 +185,7 @@ function managePreSelect(form) {
             form.minPi.value = "0";
             form.max.value = "0";
             form.maxPi.value = "2";
-            form.precision.value = "0,001";
+            form.precision.value = "0.001";
             return 0;
 
         case "triangle":
@@ -218,7 +219,7 @@ function managePreSelect(form) {
             form.minPi.value = "0";
             form.max.value = "0";
             form.maxPi.value = "2";
-            form.precision.value = "0,001";
+            form.precision.value = "0.001";
             return 0;
 
         default:
