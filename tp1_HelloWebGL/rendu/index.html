@@ -13,8 +13,8 @@
 <form id="form">
     <div class="DivVal">
         <div>
-        <!-- fonction paramétrique de x(t) -->
-        x(t) =  <input type="text" class="caseDonnee" name="xCte1"  value="1"> *
+            <!-- fonction paramétrique de x(t) -->
+            x(t) = <input type="text" class="caseDonnee" name="xCte1" value="1"> *
             <select name="x1">
                 <option value=""></option>
                 <option value="cos">cos(t)</option>
@@ -22,8 +22,8 @@
                 <option value="t">t</option>
                 <option value="pi">pi</option>
             </select>
-            ^ <input name="xPuissance1" class="caseDonnee"  value="3">
-            + <input class="caseDonnee"  name="xCte2" value="0"> *
+            ^ <input name="xPuissance1" class="caseDonnee" value="3">
+            + <input class="caseDonnee" name="xCte2" value="0"> *
             <select name="x2">
                 <option value=""></option>
                 <option value="cos">cos(t)</option>
@@ -31,11 +31,11 @@
                 <option value="t">t</option>
                 <option value="pi">pi</option>
             </select>
-            ^ <input name="xPuissance2" class="caseDonnee"  value="1">
+            ^ <input name="xPuissance2" class="caseDonnee" value="1">
         </div>
         <br>
         <div>
-            &emsp; + <input class="caseDonnee"  name="xCte3" value="0"> *
+            &emsp; + <input class="caseDonnee" name="xCte3" value="0"> *
             <select name="x3">
                 <option value=""></option>
                 <option value="cos">cos(t)</option>
@@ -43,8 +43,8 @@
                 <option value="t" selected>t</option>
                 <option value="pi">pi</option>
             </select>
-            ^ <input name="xPuissance3" class="caseDonnee"  value="1">
-            + <input class="caseDonnee"  name="xCte4" value="0"> *
+            ^ <input name="xPuissance3" class="caseDonnee" value="1">
+            + <input class="caseDonnee" name="xCte4" value="0"> *
             <select name="x4">
                 <option value=""></option>
                 <option value="cos">cos(t)</option>
@@ -52,10 +52,10 @@
                 <option value="t">t</option>
                 <option value="pi" selected>pi</option>
             </select>
-            ^ <input name="xPuissance4" class="caseDonnee"  value="1">
+            ^ <input name="xPuissance4" class="caseDonnee" value="1">
         </div>
     </div>
-<!-- à faire optimisation des selects -> possible de le faire en javascript avec un document.querySelectorAll -->
+    <!-- à faire optimisation des selects -> possible de le faire en javascript avec un document.querySelectorAll -->
     <!-- fonction paramétrique de y(t) -->
     <div class="DivVal">
         <div>
@@ -100,7 +100,7 @@
             ^ <input name="yPuissance4" class="caseDonnee" value="1">
         </div>
 
-    <!-- permet de changer l'intervalle sur laquelle sera appliqué la fonction paramétrique -->
+        <!-- permet de changer l'intervalle sur laquelle sera appliqué la fonction paramétrique -->
         <div class="DivVal">
             <div>
                 Intervalle min = <input name="min" class="caseDonnee" value="0">
@@ -114,15 +114,14 @@
                 <!-- permet à l'utilisateur de choisir parmis une sélection de formes -->
                 <br>
                 Forme préprogrammé : <select id="preload" name="formepreload">
-                    <option value=""selected></option>
-                    <option value="coeur">coeur</option>
-                    <option value="rond">rond</option>
-                    <option value="astroïde" >astroïde</option>
-                    <option value="triangle">triangle</option>
-                </select>
+                <option value="" selected></option>
+                <option value="coeur">coeur</option>
+                <option value="rond">rond</option>
+                <option value="astroïde">astroïde</option>
+            </select>
             </div>
 
-            <input id="submit" type="button" class="btn btn-primary" value="Dessiner" >
+            <input id="submit" type="button" class="btn btn-primary" value="Dessiner">
         </div>
     </div>
 

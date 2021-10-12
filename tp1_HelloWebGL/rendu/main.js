@@ -1,3 +1,7 @@
+function initSelect() {
+
+}
+
 function main(form) {
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight - window.innerHeight * 16 / 100);
@@ -180,40 +184,6 @@ function managePreSelect(form) {
             form.yCte4.value = "0";
             form.y4.value = "t";
             form.yPuissance4.value = "0";
-
-            form.min.value = "0";
-            form.minPi.value = "0";
-            form.max.value = "0";
-            form.maxPi.value = "2";
-            form.precision.value = "0.001";
-            return 0;
-
-        case "triangle":
-            form.xCte1.value = "1";
-            form.x1.value = "sin(t)";
-            form.xPuissance1.value = "3";
-            form.xCte2.value = "0";
-            form.x2.value = "sin(t)";
-            form.xPuissance2.value = "1";
-            form.xCte3.value = "0";
-            form.x3.value = "t";
-            form.xPuissance3.value = "1";
-            form.xCte4.value = "0";
-            form.x4.value = "pi";
-            form.xPuissance4.value = "1";
-
-            form.yCte1.value = "1";
-            form.y1.value = "cos(t)";
-            form.yPuissance1.value = "1";
-            form.yCte2.value = "-1";
-            form.y2.value = "cos(t)";
-            form.yPuissance2.value = "4";
-            form.yCte3.value = "0";
-            form.y3.value = "t";
-            form.yPuissance3.value = "1";
-            form.yCte4.value = "0";
-            form.y4.value = "pi";
-            form.yPuissance4.value = "1";
 
             form.min.value = "0";
             form.minPi.value = "0";
