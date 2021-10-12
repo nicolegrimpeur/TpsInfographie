@@ -87,7 +87,7 @@ function managePreSelect(form) {
     switch (selection) {
         case "coeur":
             form.xCte1.value = "1";
-            form.x1.value = "sin(t)";
+            form.x1.value = "sin";
             form.xPuissance1.value = "3";
             form.xCte2.value = "0";
             form.x2.value = "t";
@@ -100,10 +100,10 @@ function managePreSelect(form) {
             form.xPuissance4.value = "0";
 
             form.yCte1.value = "1";
-            form.y1.value = "cos(t)";
+            form.y1.value = "cos";
             form.yPuissance1.value = "1";
             form.yCte2.value = "-1";
-            form.y2.value = "cos(t)";
+            form.y2.value = "cos";
             form.yPuissance2.value = "4";
             form.yCte3.value = "0";
             form.y3.value = "t";
@@ -121,7 +121,7 @@ function managePreSelect(form) {
 
         case "rond":
             form.xCte1.value = "2";
-            form.x1.value = "cos(t)";
+            form.x1.value = "cos";
             form.xPuissance1.value = "1";
             form.xCte2.value = "0";
             form.x2.value = "t";
@@ -134,7 +134,7 @@ function managePreSelect(form) {
             form.xPuissance4.value = "0";
 
             form.yCte1.value = "2";
-            form.y1.value = "sin(t)";
+            form.y1.value = "sin";
             form.yPuissance1.value = "1";
             form.yCte2.value = "0";
             form.y2.value = "t";
@@ -155,7 +155,7 @@ function managePreSelect(form) {
 
         case "astroïde":
             form.xCte1.value = "1";
-            form.x1.value = "cos(t)";
+            form.x1.value = "cos";
             form.xPuissance1.value = "3";
             form.xCte2.value = "0";
             form.x2.value = "t";
@@ -168,7 +168,7 @@ function managePreSelect(form) {
             form.xPuissance4.value = "0";
 
             form.yCte1.value = "1";
-            form.y1.value = "sin(t)";
+            form.y1.value = "sin";
             form.yPuissance1.value = "3";
             form.yCte2.value = "0";
             form.y2.value = "t";
