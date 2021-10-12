@@ -47,11 +47,11 @@ function addPoint(form) {
         x = parseInt(form.xCte1.value) * Math.pow(manageSelect(form.x1.value, i), parseInt(form.xPuissance1.value)) +
             parseInt(form.xCte2.value) * Math.pow(manageSelect(form.x2.value, i), parseInt(form.xPuissance2.value)) +
             parseInt(form.xCte3.value) * Math.pow(manageSelect(form.x3.value, i), parseInt(form.xPuissance3.value)) +
-            parseInt(form.xCte4.value) * Math.pow(manageSelect(form.x3.value, i), parseInt(form.xPuissance4.value));
+            parseInt(form.xCte4.value) * Math.pow(manageSelect(form.x4.value, i), parseInt(form.xPuissance4.value));
         y = parseInt(form.yCte1.value) * Math.pow(manageSelect(form.y1.value, i), parseInt(form.yPuissance1.value)) +
             parseInt(form.yCte2.value) * Math.pow(manageSelect(form.y2.value, i), parseInt(form.yPuissance2.value)) +
             parseInt(form.yCte3.value) * Math.pow(manageSelect(form.y3.value, i), parseInt(form.yPuissance3.value)) +
-            parseInt(form.yCte4.value) * Math.pow(manageSelect(form.y3.value, i), parseInt(form.yPuissance4.value));
+            parseInt(form.yCte4.value) * Math.pow(manageSelect(form.y4.value, i), parseInt(form.yPuissance4.value));
         // x = 2 * Math.cos(i); // pour le cercle
         // y = 2 * Math.sin(i);
         // x = 2 * Math.pow(Math.sin(i), 3); // pour le coeur
@@ -79,3 +79,150 @@ function manageSelect(value, i) {
             return 0;
     }
 }
+
+
+function managePreSelect(form) {
+
+    let selection = form.formepreload.value;
+    switch (selection) {
+        case "coeur":
+            form.xCte1.value = "1";
+            form.x1.value = "sin(t)";
+            form.xPuissance1.value = "3";
+            form.xCte2.value = "0";
+            form.x2.value = "t";
+            form.xPuissance2.value = "0";
+            form.xCte3.value = "0";
+            form.x3.value = "t";
+            form.xPuissance3.value = "0";
+            form.xCte4.value = "0";
+            form.x4.value = "t";
+            form.xPuissance4.value = "0";
+
+            form.yCte1.value = "1";
+            form.y1.value = "cos(t)";
+            form.yPuissance1.value = "1";
+            form.yCte2.value = "-1";
+            form.y2.value = "cos(t)";
+            form.yPuissance2.value = "4";
+            form.yCte3.value = "0";
+            form.y3.value = "t";
+            form.yPuissance3.value = "0";
+            form.yCte4.value = "0";
+            form.y4.value = "t";
+            form.yPuissance4.value = "0";
+
+            form.min.value = "0";
+            form.minPi.value = "0";
+            form.max.value = "0";
+            form.maxPi.value = "2";
+            form.precision.value = "0,001";
+            return 0;
+
+        case "rond":
+            form.xCte1.value = "2";
+            form.x1.value = "cos(t)";
+            form.xPuissance1.value = "1";
+            form.xCte2.value = "0";
+            form.x2.value = "t";
+            form.xPuissance2.value = "0";
+            form.xCte3.value = "0";
+            form.x3.value = "t";
+            form.xPuissance3.value = "0";
+            form.xCte4.value = "0";
+            form.x4.value = "t";
+            form.xPuissance4.value = "0";
+
+            form.yCte1.value = "2";
+            form.y1.value = "sin(t)";
+            form.yPuissance1.value = "1";
+            form.yCte2.value = "0";
+            form.y2.value = "t";
+            form.yPuissance2.value = "0";
+            form.yCte3.value = "0";
+            form.y3.value = "t";
+            form.yPuissance3.value = "0";
+            form.yCte4.value = "0";
+            form.y4.value = "t";
+            form.yPuissance4.value = "0";
+
+            form.min.value = "0";
+            form.minPi.value = "0";
+            form.max.value = "0";
+            form.maxPi.value = "2";
+            form.precision.value = "0,001";
+            return 0;
+
+        case "astroïde":
+            form.xCte1.value = "1";
+            form.x1.value = "cos(t)";
+            form.xPuissance1.value = "3";
+            form.xCte2.value = "0";
+            form.x2.value = "t";
+            form.xPuissance2.value = "0";
+            form.xCte3.value = "0";
+            form.x3.value = "t";
+            form.xPuissance3.value = "0";
+            form.xCte4.value = "0";
+            form.x4.value = "t";
+            form.xPuissance4.value = "0";
+
+            form.yCte1.value = "1";
+            form.y1.value = "sin(t)";
+            form.yPuissance1.value = "3";
+            form.yCte2.value = "0";
+            form.y2.value = "t";
+            form.yPuissance2.value = "0";
+            form.yCte3.value = "0";
+            form.y3.value = "t";
+            form.yPuissance3.value = "0";
+            form.yCte4.value = "0";
+            form.y4.value = "t";
+            form.yPuissance4.value = "0";
+
+            form.min.value = "0";
+            form.minPi.value = "0";
+            form.max.value = "0";
+            form.maxPi.value = "2";
+            form.precision.value = "0,001";
+            return 0;
+
+        case "triangle":
+            form.xCte1.value = "1";
+            form.x1.value = "sin(t)";
+            form.xPuissance1.value = "3";
+            form.xCte2.value = "0";
+            form.x2.value = "sin(t)";
+            form.xPuissance2.value = "1";
+            form.xCte3.value = "0";
+            form.x3.value = "t";
+            form.xPuissance3.value = "1";
+            form.xCte4.value = "0";
+            form.x4.value = "pi";
+            form.xPuissance4.value = "1";
+
+            form.yCte1.value = "1";
+            form.y1.value = "cos(t)";
+            form.yPuissance1.value = "1";
+            form.yCte2.value = "-1";
+            form.y2.value = "cos(t)";
+            form.yPuissance2.value = "4";
+            form.yCte3.value = "0";
+            form.y3.value = "t";
+            form.yPuissance3.value = "1";
+            form.yCte4.value = "0";
+            form.y4.value = "pi";
+            form.yPuissance4.value = "1";
+
+            form.min.value = "0";
+            form.minPi.value = "0";
+            form.max.value = "0";
+            form.maxPi.value = "2";
+            form.precision.value = "0,001";
+            return 0;
+
+        default:
+            return 0;
+    }
+}
+
