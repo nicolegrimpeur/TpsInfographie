@@ -10,88 +10,86 @@
     <script src="./node_modules/three/build/three.min.js"></script>
 </head>
 <body>
-<form id="form">
-    <div class="DivVal">
-        <div>
-            <!-- fonction paramétrique de x(t) -->
-            x(t) = <input type="text" class="caseDonnee" name="xCte1" value="1"> *
-            <select name="x1">
-            </select>
-            ^ <input name="xPuissance1" class="caseDonnee" value="3">
-            + <input class="caseDonnee" name="xCte2" value="0"> *
-            <select name="x2">
-            </select>
-            ^ <input name="xPuissance2" class="caseDonnee" value="1">
-        </div>
-        <br>
-        <div>
-            &emsp; + <input class="caseDonnee" name="xCte3" value="0"> *
-            <select name="x3">
-            </select>
-            ^ <input name="xPuissance3" class="caseDonnee" value="1">
-            + <input class="caseDonnee" name="xCte4" value="0"> *
-            <select name="x4">
-            </select>
-            ^ <input name="xPuissance4" class="caseDonnee" value="1">
-        </div>
-    </div>
-    <!-- à faire optimisation des selects -> possible de le faire en javascript avec un document.querySelectorAll -->
-    <!-- fonction paramétrique de y(t) -->
-    <div class="DivVal">
-        <div>
-            y(t) = <input name="yCte1" class="caseDonnee" value="1"> *
-            <select name="y1">
-            </select>
-            ^ <input name="yPuissance1" class="caseDonnee" value="1">
-            + <input name="yCte2" class="caseDonnee" value="-1"> *
-            <select name="y2">
-            </select>
-            ^ <input name="yPuissance2" class="caseDonnee" value="4">
-        </div>
-        <br>
-        <div>
-            &emsp; + <input name="yCte3" class="caseDonnee" value="0"> *
-            <select name="y3">
-            </select>
-            ^ <input name="yPuissance3" class="caseDonnee" value="1">
-            + <input name="yCte4" class="caseDonnee" value="0"> *
-            <select name="y4">
-            </select>
-            ^ <input name="yPuissance4" class="caseDonnee" value="1">
-        </div>
+<div class="masthead">
 
-        <!-- permet de changer l'intervalle sur laquelle sera appliqué la fonction paramétrique -->
+    <form id="form">
         <div class="DivVal">
             <div>
-                Intervalle min = <input name="min" class="caseDonnee" value="0">
-                + <input name="minPi" class="caseDonnee" value="0">
-                * pi; max = <input class="caseDonnee" name="max" value="0">
-                + <input name="maxPi" class="caseDonnee" value="2"> * pi<br>
-                <!-- à faire rajouter intervalle d'affichage-->
-                <br>
-                Précision : <input name="precision" id="casePrecis" class="caseDonnee" value="0.001"> <br>
-                Dézoom de la caméra : <input name="dezoom" class="caseDonnee" value="7"> <br>
-
-                <!-- permet à l'utilisateur de choisir parmis une sélection de formes -->
-                <br>
-                Forme préprogrammé : <select id="preload" name="formepreload">
-                <option value="" selected></option>
-                <option value="coeur">coeur</option>
-                <option value="rond">rond</option>
-                <option value="astroïde">astroïde</option>
-            </select>
+                <!-- fonction paramétrique de x(t) -->
+                x(t) = <input type="text" class="caseDonnee" name="xCte1" value="1"> *
+                <select name="x1">
+                </select>
+                ^ <input name="xPuissance1" class="caseDonnee" value="3">
+                + <input class="caseDonnee" name="xCte2" value="0"> *
+                <select name="x2">
+                </select>
+                ^ <input name="xPuissance2" class="caseDonnee" value="1">
+            </div>
+            <br>
+            <div>
+                &emsp; + <input class="caseDonnee" name="xCte3" value="0"> *
+                <select name="x3">
+                </select>
+                ^ <input name="xPuissance3" class="caseDonnee" value="1">
+                + <input class="caseDonnee" name="xCte4" value="0"> *
+                <select name="x4">
+                </select>
+                ^ <input name="xPuissance4" class="caseDonnee" value="1">
+            </div>
+        </div>
+        <!-- à faire optimisation des selects -> possible de le faire en javascript avec un document.querySelectorAll -->
+        <!-- fonction paramétrique de y(t) -->
+        <div class="DivVal">
+            <div>
+                y(t) = <input name="yCte1" class="caseDonnee" value="1"> *
+                <select name="y1">
+                </select>
+                ^ <input name="yPuissance1" class="caseDonnee" value="1">
+                + <input name="yCte2" class="caseDonnee" value="-1"> *
+                <select name="y2">
+                </select>
+                ^ <input name="yPuissance2" class="caseDonnee" value="4">
+            </div>
+            <br>
+            <div>
+                &emsp; + <input name="yCte3" class="caseDonnee" value="0"> *
+                <select name="y3">
+                </select>
+                ^ <input name="yPuissance3" class="caseDonnee" value="1">
+                + <input name="yCte4" class="caseDonnee" value="0"> *
+                <select name="y4">
+                </select>
+                ^ <input name="yPuissance4" class="caseDonnee" value="1">
             </div>
 
-            <input id="submit" type="button" class="btn btn-primary" value="Dessiner">
+            <!-- permet de changer l'intervalle sur laquelle sera appliqué la fonction paramétrique -->
+            <div class="DivVal">
+                <div>
+                    Intervalle min = <input name="min" class="caseDonnee" value="0">
+                    + <input name="minPi" class="caseDonnee" value="0">
+                    * pi; max = <input class="caseDonnee" name="max" value="0">
+                    + <input name="maxPi" class="caseDonnee" value="2"> * pi<br>
+                    <!-- à faire rajouter intervalle d'affichage-->
+                    <br>
+                    Précision : <input name="precision" id="casePrecis" class="caseDonnee" value="0.001"> <br>
+                    Dézoom de la caméra : <input name="dezoom" class="caseDonnee" value="7"> <br>
+
+                    <!-- permet à l'utilisateur de choisir parmis une sélection de formes -->
+                    <br>
+                    Forme préprogrammé : <select id="preload" name="formepreload">
+                    <option value="" selected></option>
+                    <option value="coeur">coeur</option>
+                    <option value="rond">rond</option>
+                    <option value="astroïde">astroïde</option>
+                </select>
+                </div>
+
+                <input id="submit" type="button" class="btn btn-primary" value="Dessiner">
+            </div>
         </div>
-    </div>
 
-</form>
-
-<div id="blanc">
-
+    </form>
 </div>
-
 <script src="main.js"></script>
 
 <script>

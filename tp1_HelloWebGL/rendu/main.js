@@ -28,14 +28,14 @@ function initSelect() {
 
 function main(form) {
     const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight - window.innerHeight * 16 / 100);
+    renderer.setSize(window.innerWidth * 0.7, window.innerHeight);
 
     // permet de supprimer le canva s'il existe déjà pour l'actualiser
     if (document.querySelector('canvas') !== null) document.querySelector('canvas').remove();
-    document.body.appendChild(renderer.domElement);
+    document.getElementsByClassName('masthead')[0].appendChild(renderer.domElement);
 
     // on créé la caméra de la taille de la fenêtre moins
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - window.innerHeight * 16 / 100), 1, 500);
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth * 0.7 / window.innerHeight, 1, 500);
     camera.position.set(0, 0, 0);
     camera.lookAt(0, 0, 0);
 
@@ -46,7 +46,7 @@ function main(form) {
 
     // couleur et taille de chaque point
     const material = new THREE.PointsMaterial({
-        color: 0x0000ff,
+        color: 0xb1b1b1,
         size: 0.04
     });
 

@@ -20,14 +20,14 @@ form {
     width:30vw;
     line-height:10px;
     z-index: 2;
-    background-color: white;
     padding-left: 5px;
 }
+
 canvas{
     position: absolute;
     z-index: 1;
     margin-top:-15vh;
-    margin-left: 0vw;
+    margin-left: 30vw;
 }
 
 .caseDonnee{
@@ -55,12 +55,9 @@ canvas{
     margin-bottom: 15px;
 }
 
-#blanc{
-    position: absolute;
-    left:70vw;
-    top:0vh;
+/* classe pour le fond */
+.masthead {
     height: 100vh;
-    width: 30vw;
-    z-index: 2;
-    background-color: white;
+    background: linear-gradient(to bottom, rgba(22, 22, 22, 0.3) 0%, rgba(22, 22, 22, 0.7) 75%, #161616 100%), url(./background.jpg);
+    background-size: cover;
 }
