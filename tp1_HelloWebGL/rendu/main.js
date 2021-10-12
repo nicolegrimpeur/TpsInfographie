@@ -40,7 +40,7 @@ function main(form) {
     camera.lookAt(0, 0, 0);
 
     // à faire, permettre à l'utilisateur de gérer le dézoom
-    camera.position.z = 7;
+    camera.position.z = form.dezoom.value;
 
     const scene = new THREE.Scene();
 
@@ -148,6 +148,7 @@ function managePreSelect(form) {
             form.max.value = '0';
             form.maxPi.value = '2';
             form.precision.value = '0.001';
+            form.dezoom.value = '5';
             return 0;
 
         case 'rond':
@@ -182,6 +183,7 @@ function managePreSelect(form) {
             form.max.value = '0';
             form.maxPi.value = '2';
             form.precision.value = '0.001';
+            form.dezoom.value = '7';
             return 0;
 
         case 'astroïde':
@@ -216,6 +218,7 @@ function managePreSelect(form) {
             form.max.value = '0';
             form.maxPi.value = '2';
             form.precision.value = '0.001';
+            form.dezoom.value = '4';
             return 0;
 
         default:
