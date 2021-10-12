@@ -1,5 +1,29 @@
 function initSelect() {
+    // on récupère tous les selects de la page
+    const selects = document.querySelectorAll('select');
 
+    // toutes les possibilités de fonction possible implémenté
+    const possibilites = [
+        {code: '', affichage: ''},
+        {code: 'cos', affichage: 'cos(t)'},
+        {code: 'sin', affichage: 'sin(t)'},
+        {code: 'pi', affichage: 'pi'},
+        {code: 't', affichage: 't'},
+        {code: 'racine', affichage: 'racine carré'}];
+
+    let option;
+    // on parcours tous les selects
+    for (const select of selects) {
+        // si le select n'est pas le select des fonctions préprogrammés
+        // alors on ajoute toutes les possibilités au select
+        if (select.id !== 'preload') for (const possibilite of possibilites) {
+            option = document.createElement('option');
+            option.setAttribute('value', possibilite.code);
+            if (possibilite.code === 'cos') option.setAttribute('selected', '');
+            option.textContent = possibilite.affichage;
+            select.appendChild(option);
+        }
+    }
 }
 
 function main(form) {
@@ -71,14 +95,16 @@ function addPoint(form) {
 // gère le retour du select pour retourner la valeur nécessaire au calcul de la coordonnée
 function manageSelect(value, i) {
     switch (value) {
-        case "cos":
+        case 'cos':
             return Math.cos(i);
-        case "sin":
+        case 'sin':
             return Math.sin(i);
-        case "pi":
+        case 'pi':
             return Math.PI;
-        case "i":
+        case 'i':
             return i;
+        case 'racine':
+            return Math.sqrt(i);
         default:
             return 0;
     }
@@ -90,106 +116,106 @@ function managePreSelect(form) {
 
     let selection = form.formepreload.value;
     switch (selection) {
-        case "coeur":
-            form.xCte1.value = "1";
-            form.x1.value = "sin";
-            form.xPuissance1.value = "3";
-            form.xCte2.value = "0";
-            form.x2.value = "t";
-            form.xPuissance2.value = "0";
-            form.xCte3.value = "0";
-            form.x3.value = "t";
-            form.xPuissance3.value = "0";
-            form.xCte4.value = "0";
-            form.x4.value = "t";
-            form.xPuissance4.value = "0";
+        case 'coeur':
+            form.xCte1.value = '1';
+            form.x1.value = 'sin';
+            form.xPuissance1.value = '3';
+            form.xCte2.value = '0';
+            form.x2.value = 't';
+            form.xPuissance2.value = '0';
+            form.xCte3.value = '0';
+            form.x3.value = 't';
+            form.xPuissance3.value = '0';
+            form.xCte4.value = '0';
+            form.x4.value = 't';
+            form.xPuissance4.value = '0';
 
-            form.yCte1.value = "1";
-            form.y1.value = "cos";
-            form.yPuissance1.value = "1";
-            form.yCte2.value = "-1";
-            form.y2.value = "cos";
-            form.yPuissance2.value = "4";
-            form.yCte3.value = "0";
-            form.y3.value = "t";
-            form.yPuissance3.value = "0";
-            form.yCte4.value = "0";
-            form.y4.value = "t";
-            form.yPuissance4.value = "0";
+            form.yCte1.value = '1';
+            form.y1.value = 'cos';
+            form.yPuissance1.value = '1';
+            form.yCte2.value = '-1';
+            form.y2.value = 'cos';
+            form.yPuissance2.value = '4';
+            form.yCte3.value = '0';
+            form.y3.value = 't';
+            form.yPuissance3.value = '0';
+            form.yCte4.value = '0';
+            form.y4.value = 't';
+            form.yPuissance4.value = '0';
 
-            form.min.value = "0";
-            form.minPi.value = "0";
-            form.max.value = "0";
-            form.maxPi.value = "2";
-            form.precision.value = "0.001";
+            form.min.value = '0';
+            form.minPi.value = '0';
+            form.max.value = '0';
+            form.maxPi.value = '2';
+            form.precision.value = '0.001';
             return 0;
 
-        case "rond":
-            form.xCte1.value = "2";
-            form.x1.value = "cos";
-            form.xPuissance1.value = "1";
-            form.xCte2.value = "0";
-            form.x2.value = "t";
-            form.xPuissance2.value = "0";
-            form.xCte3.value = "0";
-            form.x3.value = "t";
-            form.xPuissance3.value = "0";
-            form.xCte4.value = "0";
-            form.x4.value = "t";
-            form.xPuissance4.value = "0";
+        case 'rond':
+            form.xCte1.value = '2';
+            form.x1.value = 'cos';
+            form.xPuissance1.value = '1';
+            form.xCte2.value = '0';
+            form.x2.value = 't';
+            form.xPuissance2.value = '0';
+            form.xCte3.value = '0';
+            form.x3.value = 't';
+            form.xPuissance3.value = '0';
+            form.xCte4.value = '0';
+            form.x4.value = 't';
+            form.xPuissance4.value = '0';
 
-            form.yCte1.value = "2";
-            form.y1.value = "sin";
-            form.yPuissance1.value = "1";
-            form.yCte2.value = "0";
-            form.y2.value = "t";
-            form.yPuissance2.value = "0";
-            form.yCte3.value = "0";
-            form.y3.value = "t";
-            form.yPuissance3.value = "0";
-            form.yCte4.value = "0";
-            form.y4.value = "t";
-            form.yPuissance4.value = "0";
+            form.yCte1.value = '2';
+            form.y1.value = 'sin';
+            form.yPuissance1.value = '1';
+            form.yCte2.value = '0';
+            form.y2.value = 't';
+            form.yPuissance2.value = '0';
+            form.yCte3.value = '0';
+            form.y3.value = 't';
+            form.yPuissance3.value = '0';
+            form.yCte4.value = '0';
+            form.y4.value = 't';
+            form.yPuissance4.value = '0';
 
-            form.min.value = "0";
-            form.minPi.value = "0";
-            form.max.value = "0";
-            form.maxPi.value = "2";
-            form.precision.value = "0.001";
+            form.min.value = '0';
+            form.minPi.value = '0';
+            form.max.value = '0';
+            form.maxPi.value = '2';
+            form.precision.value = '0.001';
             return 0;
 
-        case "astroïde":
-            form.xCte1.value = "1";
-            form.x1.value = "cos";
-            form.xPuissance1.value = "3";
-            form.xCte2.value = "0";
-            form.x2.value = "t";
-            form.xPuissance2.value = "0";
-            form.xCte3.value = "0";
-            form.x3.value = "t";
-            form.xPuissance3.value = "0";
-            form.xCte4.value = "0";
-            form.x4.value = "t";
-            form.xPuissance4.value = "0";
+        case 'astroïde':
+            form.xCte1.value = '1';
+            form.x1.value = 'cos';
+            form.xPuissance1.value = '3';
+            form.xCte2.value = '0';
+            form.x2.value = 't';
+            form.xPuissance2.value = '0';
+            form.xCte3.value = '0';
+            form.x3.value = 't';
+            form.xPuissance3.value = '0';
+            form.xCte4.value = '0';
+            form.x4.value = 't';
+            form.xPuissance4.value = '0';
 
-            form.yCte1.value = "1";
-            form.y1.value = "sin";
-            form.yPuissance1.value = "3";
-            form.yCte2.value = "0";
-            form.y2.value = "t";
-            form.yPuissance2.value = "0";
-            form.yCte3.value = "0";
-            form.y3.value = "t";
-            form.yPuissance3.value = "0";
-            form.yCte4.value = "0";
-            form.y4.value = "t";
-            form.yPuissance4.value = "0";
+            form.yCte1.value = '1';
+            form.y1.value = 'sin';
+            form.yPuissance1.value = '3';
+            form.yCte2.value = '0';
+            form.y2.value = 't';
+            form.yPuissance2.value = '0';
+            form.yCte3.value = '0';
+            form.y3.value = 't';
+            form.yPuissance3.value = '0';
+            form.yCte4.value = '0';
+            form.y4.value = 't';
+            form.yPuissance4.value = '0';
 
-            form.min.value = "0";
-            form.minPi.value = "0";
-            form.max.value = "0";
-            form.maxPi.value = "2";
-            form.precision.value = "0.001";
+            form.min.value = '0';
+            form.minPi.value = '0';
+            form.max.value = '0';
+            form.maxPi.value = '2';
+            form.precision.value = '0.001';
             return 0;
 
         default:

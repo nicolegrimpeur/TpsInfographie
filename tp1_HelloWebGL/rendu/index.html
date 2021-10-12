@@ -16,20 +16,10 @@
             <!-- fonction paramétrique de x(t) -->
             x(t) = <input type="text" class="caseDonnee" name="xCte1" value="1"> *
             <select name="x1">
-                <option value=""></option>
-                <option value="cos">cos(t)</option>
-                <option value="sin" selected>sin(t)</option>
-                <option value="t">t</option>
-                <option value="pi">pi</option>
             </select>
             ^ <input name="xPuissance1" class="caseDonnee" value="3">
             + <input class="caseDonnee" name="xCte2" value="0"> *
             <select name="x2">
-                <option value=""></option>
-                <option value="cos">cos(t)</option>
-                <option value="sin" selected>sin(t)</option>
-                <option value="t">t</option>
-                <option value="pi">pi</option>
             </select>
             ^ <input name="xPuissance2" class="caseDonnee" value="1">
         </div>
@@ -37,20 +27,10 @@
         <div>
             &emsp; + <input class="caseDonnee" name="xCte3" value="0"> *
             <select name="x3">
-                <option value=""></option>
-                <option value="cos">cos(t)</option>
-                <option value="sin">sin(t)</option>
-                <option value="t" selected>t</option>
-                <option value="pi">pi</option>
             </select>
             ^ <input name="xPuissance3" class="caseDonnee" value="1">
             + <input class="caseDonnee" name="xCte4" value="0"> *
             <select name="x4">
-                <option value=""></option>
-                <option value="cos">cos(t)</option>
-                <option value="sin">sin(t)</option>
-                <option value="t">t</option>
-                <option value="pi" selected>pi</option>
             </select>
             ^ <input name="xPuissance4" class="caseDonnee" value="1">
         </div>
@@ -61,20 +41,10 @@
         <div>
             y(t) = <input name="yCte1" class="caseDonnee" value="1"> *
             <select name="y1">
-                <option value=""></option>
-                <option value="cos" selected>cos(t)</option>
-                <option value="sin">sin(t)</option>
-                <option value="t">t</option>
-                <option value="pi">pi</option>
             </select>
             ^ <input name="yPuissance1" class="caseDonnee" value="1">
             + <input name="yCte2" class="caseDonnee" value="-1"> *
             <select name="y2">
-                <option value=""></option>
-                <option value="cos" selected>cos(t)</option>
-                <option value="sin">sin(t)</option>
-                <option value="t">t</option>
-                <option value="pi">pi</option>
             </select>
             ^ <input name="yPuissance2" class="caseDonnee" value="4">
         </div>
@@ -82,20 +52,10 @@
         <div>
             &emsp; + <input name="yCte3" class="caseDonnee" value="0"> *
             <select name="y3">
-                <option value=""></option>
-                <option value="cos">cos(t)</option>
-                <option value="sin">sin(t)</option>
-                <option value="t" selected>t</option>
-                <option value="pi">pi</option>
             </select>
             ^ <input name="yPuissance3" class="caseDonnee" value="1">
             + <input name="yCte4" class="caseDonnee" value="0"> *
             <select name="y4">
-                <option value=""></option>
-                <option value="cos">cos(t)</option>
-                <option value="sin">sin(t)</option>
-                <option value="t">t</option>
-                <option value="pi" selected>pi</option>
             </select>
             ^ <input name="yPuissance4" class="caseDonnee" value="1">
         </div>
@@ -134,6 +94,9 @@
 <script src="main.js"></script>
 
 <script>
+    // on initialise les selects
+    initSelect();
+
     // on récupère le bouton auquel appliquer l'événement du click, ainsi que le formulaire que l'on rentrera en paramètre du main
     let form = document.getElementById('form');
     let submit = document.getElementById('submit');
