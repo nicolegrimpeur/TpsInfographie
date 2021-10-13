@@ -2,50 +2,154 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <link type="text/css" rel="stylesheet" href="index.css">
-    <script type="text/javascript" src="main.js"></script>
+    <title>Test WebGl</title>
+    <link rel="stylesheet" href="index.css">
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
+<div class="masthead">
 
+    <form id="form">
+        <div class="DivVal">
+            <div>
+                <!-- fonction paramétrique de x(t) -->
+                x(t) = <input type="text" class="caseDonnee" name="xCte1" value="1"> *
+                <select name="x1">
+                </select>
+                ^ <input name="xPuissance1" class="caseDonnee" value="3">
+                + <input class="caseDonnee" name="xCte2" value="0"> *
+                <select name="x2">
+                </select>
+                ^ <input name="xPuissance2" class="caseDonnee" value="1">
+            </div>
+            <br>
+            <div>
+                &emsp; + <input class="caseDonnee" name="xCte3" value="0"> *
+                <select name="x3">
+                </select>
+                ^ <input name="xPuissance3" class="caseDonnee" value="1">
+                + <input class="caseDonnee" name="xCte4" value="0"> *
+                <select name="x4">
+                </select>
+                ^ <input name="xPuissance4" class="caseDonnee" value="1">
+            </div>
+        </div>
+        <!-- à faire optimisation des selects -> possible de le faire en javascript avec un document.querySelectorAll -->
+        <!-- fonction paramétrique de y(t) -->
+        <div class="DivVal">
+            <div>
+                y(t) = <input name="yCte1" class="caseDonnee" value="1"> *
+                <select name="y1">
+                </select>
+                ^ <input name="yPuissance1" class="caseDonnee" value="1">
+                + <input name="yCte2" class="caseDonnee" value="-1"> *
+                <select name="y2">
+                </select>
+                ^ <input name="yPuissance2" class="caseDonnee" value="4">
+            </div>
+            <br>
+            <div>
+                &emsp; + <input name="yCte3" class="caseDonnee" value="0"> *
+                <select name="y3">
+                </select>
+                ^ <input name="yPuissance3" class="caseDonnee" value="1">
+                + <input name="yCte4" class="caseDonnee" value="0"> *
+                <select name="y4">
+                </select>
+                ^ <input name="yPuissance4" class="caseDonnee" value="1">
+            </div>
+
+            <!-- permet de changer l'intervalle sur laquelle sera appliqué la fonction paramétrique -->
+            <div class="DivVal">
+                <div>
+                    Intervalle min = <input name="min" class="caseDonnee" value="0">
+                    + <input name="minPi" class="caseDonnee" value="0">
+                    * pi; max = <input class="caseDonnee" name="max" value="0">
+                    + <input name="maxPi" class="caseDonnee" value="2"> * pi<br>
+                    <!-- à faire rajouter intervalle d'affichage-->
+                    <br>
+                    Précision : <input name="precision" id="casePrecis" class="caseDonnee" value="0.001"> <br>
+                    Dézoom de la caméra : <input name="dezoom" class="caseDonnee" value="7"> <br>
+
+                    <!-- permet à l'utilisateur de choisir parmis une sélection de formes -->
+                    <br>
+                    Forme préprogrammé : <select id="preload" name="formepreload">
+                    <option value="" selected></option>
+                    <option value="coeur">coeur</option>
+                    <option value="rond">rond</option>
+                    <option value="astroïde">astroïde</option>
+                </select>
+                </div>
+
+                <input id="submit" type="button" class="btn btn-primary" value="Dessiner">
+            </div>
+
+
+            <!-- ajouter des points sur la figure -->
+            <div class="DivVal">
+                <div>
+                    <!-- ajouter un point -->
+                    coordonné x du point 1 x = <input type="text" class="caseDonnee" name="xPoint1" value="">
+                    y = <input type="text" class="caseDonnee" name="yPoint1" value="">
+                </div>
+                <div>
+                    <!-- ajouter un point -->
+                    coordonné x du point 2 x = <input type="text" class="caseDonnee" name="xPoint2" value="">
+                    y = <input type="text" class="caseDonnee" name="yPoint2" value="">
+                </div>
+                <div>
+                    <!-- ajouter un point -->
+                    coordonné x du point 3 x = <input type="text" class="caseDonnee" name="xPoint3" value="">
+                    y = <input type="text" class="caseDonnee" name="yPoint3" value="">
+                </div>
+                <div>
+                    <!-- ajouter un point -->
+                    coordonné x du point 4 x = <input type="text" class="caseDonnee" name="xPoint4" value="">
+                    y =<input type="text" class="caseDonnee" name="yPoint4" value="">
+                </div>
+
+                <!-- bouton pour ajouter des points sur la figure -->
+                <input id="point" type="button" class="btn btn-primary" value="ajout point">
+            </div>
+
+
+        </div>
+
+    </form>
+</div>
+<script src="main.js"></script>
+
+<script>
+    // on initialise les selects
+    initSelect();
+
+    // on récupère le bouton auquel appliquer l'événement du click, ainsi que le formulaire que l'on rentrera en paramètre du main
+    let form = document.getElementById('form');
+    let submit = document.getElementById('submit');
+
+    // on récupère le bouton pour appliquer un évènement load de figure préchargé
+    let load = document.getElementById('preload');
+
+    // on récupère le bouton pour afficher les nouveau points
+    let point = document.getElementById('point');
+
+    // lancer la fonction au click sur le bouton de sélection
+    load.addEventListener('click', () => {
+        managePreSelect(form);
+    });
+
+    // lance la fonction au click sur le bouton submit
+    submit.addEventListener('click', () => {
+        main(form);
+    });
+
+    // lance la fonction au click sur le bouton ajout point
+    point.addEventListener('click', () => {
+        ajoutPoint(form);
+    });
+</script>
 </body>
 </html>
-
-
-<body>
-<canvas id="c"></canvas>
-<script  id="vertex-shader-2d" type="notjs">
-
-  // an attribute will receive data from a buffer
-  attribute vec4 a_position;
-
-  // all shaders have a main function
-  void main() {
-
-    // gl_Position is a special variable a vertex shader
-    // is responsible for setting
-    gl_Position = a_position;
-  }
-
-</script>
-<script  id="fragment-shader-2d" type="notjs">
-
-  // fragment shaders don't have a default precision so we need
-  // to pick one. mediump is a good default
-  precision mediump float;
-
-  void main() {
-    // gl_FragColor is a special variable a fragment shader
-    // is responsible for setting
-    gl_FragColor = vec4(1, 0, 0.5, 1); // return redish-purple
-  }
-
-</script><!--
-for most samples webgl-utils only provides shader compiling/linking and
-canvas resizing because why clutter the examples with code that's the same in every sample.
-See https://webglfundamentals.org/webgl/lessons/webgl-boilerplate.html
-and https://webglfundamentals.org/webgl/lessons/webgl-resizing-the-canvas.html
-for webgl-utils, m3, m4, and webgl-lessons-ui.
--->
-<script src="https://webglfundamentals.org/webgl/resources/webgl-utils.js"></script>
-</body>
