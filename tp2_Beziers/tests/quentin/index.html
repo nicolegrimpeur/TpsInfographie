@@ -85,6 +85,32 @@
 
                 <input id="submit" type="button" class="btn btn-primary" value="Dessiner">
             </div>
+            <!-- ajouter des points sur la figure -->
+            <div class="DivVal">
+                <div>
+                    <!-- ajouter un point -->
+                    coordonné x du point 1 x = <input type="text" class="caseDonnee" name="xPoint1" value="">
+                    y = <input type="text" class="caseDonnee" name="yPoint1" value="">
+                </div>
+                <div>
+                    <!-- ajouter un point -->
+                    coordonné x du point 2 x = <input type="text" class="caseDonnee" name="xPoint2" value="">
+                    y = <input type="text" class="caseDonnee" name="yPoint2" value="">
+                </div>
+                <div>
+                    <!-- ajouter un point -->
+                    coordonné x du point 3 x = <input type="text" class="caseDonnee" name="xPoint3" value="">
+                    y = <input type="text" class="caseDonnee" name="yPoint3" value="">
+                </div>
+                <div>
+                    <!-- ajouter un point -->
+                    coordonné x du point 4 x = <input type="text" class="caseDonnee" name="xPoint4" value="">
+                    y =<input type="text" class="caseDonnee" name="yPoint4" value="">
+                </div>
+
+                <!-- bouton pour ajouter des points sur la figure -->
+                <input id="point" type="button" class="btn btn-primary" value="ajout point">
+            </div>
         </div>
     </form>
 </div>
@@ -109,6 +135,11 @@
     // lance la fonction au click sur le bouton submit
     submit.addEventListener('click', () => {
         main(form);
+    });
+
+    // lance la fonction au click sur le bouton ajout point
+    point.addEventListener('click', () => {
+        ajoutPoint(form);
     });
 </script>
 </body>

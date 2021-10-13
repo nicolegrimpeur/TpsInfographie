@@ -35,6 +35,7 @@ function main(form) {
     // permet de supprimer le canva s'il existe déjà pour l'actualiser
     if (document.querySelector('canvas') !== null) document.querySelector('canvas').remove();
     document.getElementsByClassName('masthead')[0].appendChild(renderer.domElement);
+    renderer.domElement.setAttribute('id', 'myCanvas');
 
     // on créé la caméra de la taille de la fenêtre moins
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth * 0.7 / window.innerHeight, 1, 500);
@@ -45,44 +46,42 @@ function main(form) {
     camera.position.z = form.dezoom.value;
 
     const scene = new THREE.Scene();
-    const materialLigne = new THREE.LineBasicMaterial({
-        color: 0xb1b1b1
-    });
 
     // on ajoute tous les points
     // const points = addPoint(form);
 
-    function repere(zoom){
-        let tab = [];
-        tab.push(new THREE.Vector3(0,100,0));
-        for(let i=1;i<=100;i++){
+}
+
+function repere(){
+    let tab = [];
+    tab.push(new THREE.Vector3(0,100,0));
+    for(let i=1;i<=100;i++){
+        if(i%2==0){
             tab.push(new THREE.Vector3(0,0.5*i,0));
-            tab.push(new THREE.Vector3(0.1,0.5*i,0));
+            tab.push(new THREE.Vector3(0.15,0.5*i,0));
             tab.push(new THREE.Vector3(0,0.5*i,0));
         }
-        tab.push(new THREE.Vector3(0,-100,0));
-        tab.push(new THREE.Vector3(0,0,0));
-        tab.push(new THREE.Vector3(100,0,0));
-        for(let i=1;i<=100;i++){
-            tab.push(new THREE.Vector3(0.5*i,0,0));
-            tab.push(new THREE.Vector3(0.5*i,0.1,0));
-            tab.push(new THREE.Vector3(0.5*i,0,0));
+        else {
+            tab.push(new THREE.Vector3(0, 0.5 * i, 0));
+            tab.push(new THREE.Vector3(0.075, 0.5 * i, 0));
+            tab.push(new THREE.Vector3(0, 0.5 * i, 0));
         }
-        tab.push(new THREE.Vector3(-100,0,0));
-        return tab;
     }
-    var zoom = 0;
-    //const tab = repere(zoom);
-
-    // créé un buffer de points à partir du tableau de points
-    const geometryLigne = new THREE.BufferGeometry().setFromPoints(tab);
-
-    // enregistre tous les points
-    const ligne = new THREE.Line(geometryLigne, materialLigne);
-
-    // affiche tous les points
-    scene.add(ligne);
-    renderer.render(scene, camera);
+    tab.push(new THREE.Vector3(0,-100,0));
+    tab.push(new THREE.Vector3(0,0,0));
+    tab.push(new THREE.Vector3(100,0,0));
+    for(let i=1;i<=100;i++){
+        if(i%2==0){
+            tab.push(new THREE.Vector3(0.5*i,0,0));
+            tab.push(new THREE.Vector3(0.5*i,0.15,0));
+            tab.push(new THREE.Vector3(0.5*i,0,0));
+        }
+        tab.push(new THREE.Vector3(0.5*i,0,0));
+        tab.push(new THREE.Vector3(0.5*i,0.075,0));
+        tab.push(new THREE.Vector3(0.5*i,0,0));
+    }
+    tab.push(new THREE.Vector3(-100,0,0));
+    return tab;
 }
 
 // permet d'ajouter tous les points à partir du formulaire
@@ -245,4 +244,60 @@ function managePreSelect(form) {
         default:
             return 0;
     }
+}
+
+function ajoutPoint(form) {
+
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth * 0.7, window.innerHeight);
+
+    // permet de supprimer le canva s'il existe déjà pour l'actualiser
+    if (document.querySelector('canvas') !== null) document.querySelector('canvas').remove();
+    document.getElementsByClassName('masthead')[0].appendChild(renderer.domElement);
+
+    // on créé la caméra de la taille de la fenêtre moins
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth * 0.7 / window.innerHeight, 1, 500);
+    camera.position.set(0, 0, 0);
+    camera.lookAt(0, 0, 0);
+
+    // à faire, permettre à l'utilisateur de gérer le dézoom
+    camera.position.z = form.dezoom.value;
+
+    const scene = new THREE.Scene();
+
+    // couleur et taille de chaque point
+    const material = new THREE.PointsMaterial({
+        color: 0xb1b1b1,
+        size: 0.04
+    });
+    const materialLigne = new THREE.LineBasicMaterial({
+        color: 0xff0000
+    });
+    const materialRepere = new THREE.LineBasicMaterial({
+        color: 0xb1b1b1
+    });
+
+    // on ajoute tous les points
+    const points = [];
+    points[0] = new THREE.Vector3(parseInt(form.xPoint1.value), parseInt(form.yPoint1.value), 0);
+    points[1] = new THREE.Vector3(parseInt(form.xPoint2.value), parseInt(form.yPoint2.value), 0);
+    points[2] = new THREE.Vector3(parseInt(form.xPoint3.value), parseInt(form.yPoint3.value), 0);
+    points[3] = new THREE.Vector3(parseInt(form.xPoint4.value), parseInt(form.yPoint4.value), 0);
+
+    const tab = repere();
+
+    // créé un buffer de points à partir du tableau de points
+    const geometryLigne = new THREE.BufferGeometry().setFromPoints(points);
+    const geometryRepere = new THREE.BufferGeometry().setFromPoints(tab);
+
+    // enregistre tous les points
+    const ligne = new THREE.Line(geometryLigne, materialLigne);
+    const rep = new THREE.Line(geometryRepere,materialRepere);
+
+    //affiche tous les points
+    scene.add(ligne);
+    scene.add(rep);
+    renderer.render(scene, camera);
+
+
 }
