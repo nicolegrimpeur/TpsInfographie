@@ -90,30 +90,21 @@ function binomial(n, k) {
     return coeff;
 }
 
-// permet d'ajouter tous les points à partir du formulaire
-function addPoint(form) {
-    const points = [];
-    let x, y;
+// permet d'afficher les courbes de Béziers en préselection dans le bonus
+function bonus(form) {
+    switch (form.bonus.value) {
+        case 'courbe1':
+            break;
 
-    // en allant du min vers le max avec un pas de precision
-    for (let i = parseInt(form.min.value) + parseInt(form.minPi.value) * Math.PI; i < parseInt(form.max.value) + parseInt(form.maxPi.value) * Math.PI; i += parseFloat(form.precision.value)) {
-        // coordonnées du point en fonction du formulaire
-        x = parseInt(form.xCte1.value) * Math.pow(manageSelect(form.x1.value, i), parseInt(form.xPuissance1.value)) +
-            parseInt(form.xCte2.value) * Math.pow(manageSelect(form.x2.value, i), parseInt(form.xPuissance2.value)) +
-            parseInt(form.xCte3.value) * Math.pow(manageSelect(form.x3.value, i), parseInt(form.xPuissance3.value)) +
-            parseInt(form.xCte4.value) * Math.pow(manageSelect(form.x4.value, i), parseInt(form.xPuissance4.value));
-        y = parseInt(form.yCte1.value) * Math.pow(manageSelect(form.y1.value, i), parseInt(form.yPuissance1.value)) +
-            parseInt(form.yCte2.value) * Math.pow(manageSelect(form.y2.value, i), parseInt(form.yPuissance2.value)) +
-            parseInt(form.yCte3.value) * Math.pow(manageSelect(form.y3.value, i), parseInt(form.yPuissance3.value)) +
-            parseInt(form.yCte4.value) * Math.pow(manageSelect(form.y4.value, i), parseInt(form.yPuissance4.value));
-        // x = 2 * Math.cos(i); // pour le cercle
-        // y = 2 * Math.sin(i);
-        // x = 2 * Math.pow(Math.sin(i), 3); // pour le coeur
-        // y = 2 * Math.cos(i) - Math.pow(Math.cos(i), 4);
+        case 'courbe2':
+            break;
 
-        // s'il n'y a pas d'erreur dans le point, on l'ajoute à la liste de points
-        if (!isNaN(x) && !isNaN(y)) points.push(new THREE.Vector3(x, y, 0));
+        case 'courbe3':
+            break;
+
+        default:
+            break;
     }
 
-    return points;
+    // main(form);
 }

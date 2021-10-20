@@ -41,6 +41,16 @@
             </div>
             <input id="submit" type="button" class="btn btn-primary" value="Dessiner">
         </div>
+
+        <label>
+            Courbes de Béziers bonus :
+            <select id="bonus" name="bonus">
+                <option value="bonus" selected>Bonus</option>
+                <option value="courbe1">Courbe de Bézier 1</option>
+                <option value="courbe2">Courbe de Bézier 2</option>
+                <option value="courbe3">Courbe de Bézier 3</option>
+            </select>
+        </label>
     </form>
 </div>
 <script src="main.js"></script>
@@ -57,6 +67,13 @@
     submit.addEventListener('click', () => {
         main(form);
     });
+
+    let bonusSelect = document.getElementById('bonus');
+    // event sur le select de préselection
+    bonusSelect.addEventListener('change', () => {
+        bonus(form);
+    });
+
 </script>
 </body>
 </html>
