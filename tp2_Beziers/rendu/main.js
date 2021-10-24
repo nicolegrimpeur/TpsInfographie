@@ -81,6 +81,27 @@ function addPointsBezier(pointsControle) {
     return points;
 }
 
+function autoZoom(tabPoint){
+    let Xmin, Xmax, Ymin, Ymax;
+    for(let i=0;i<tabPoint.length;i++){
+        if(Xmin>tabPoint[i].x){
+            Xmin = tabPoint[i].x;
+        }
+        if(Xmax<tabPoint[i].x){
+            Xmax = tabPoint[i].x;
+        }
+        if(Ymin>tabPoint[i].y){
+            Ymin = tabPoint[i].y;
+        }
+        if(Ymax<tabPoint[i].y) {
+            Ymax = tabPoint[i].y;
+        }
+    }
+    if()
+    camera.lookAt((Xmax-Xmin)/2, (Ymax-Ymin)/2, 0);
+
+}
+
 function binomial(n, k) {
     if ((typeof n !== 'number') || (typeof k !== 'number'))
         return false;
