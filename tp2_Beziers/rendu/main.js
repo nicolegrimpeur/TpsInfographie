@@ -54,9 +54,9 @@ function addPointsControle() {
     for (let i = 0; i < form.length; i += 2) {
         el = form[i];
         elSuivant = form[i + 1];
-        if (el.name !== 'dezoom')
+        if (el.name !== 'dezoom' && el.name !== 'bonus')
             if (el.value !== '' && elSuivant.value !== '')
-                points.push(new THREE.Vector3(parseInt(el.value), parseInt(elSuivant.value), 0))
+                points.push(new THREE.Vector3(parseInt(el.value), parseInt(elSuivant.value), 0));
     }
 
     return points;
