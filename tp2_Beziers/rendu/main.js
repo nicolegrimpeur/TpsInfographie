@@ -1,3 +1,4 @@
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth * 0.7 / window.innerHeight, 1, 500);
 function main(form) {
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth * 0.7, window.innerHeight);
@@ -7,7 +8,7 @@ function main(form) {
     document.getElementsByClassName('masthead')[0].appendChild(renderer.domElement);
 
     // on créé la caméra de la taille de la fenêtre
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth * 0.7 / window.innerHeight, 1, 500);
+
     camera.position.set(0, 0, 0);
     camera.lookAt(0, 0, 0);
 
@@ -43,6 +44,10 @@ function main(form) {
     scene.add(formeControle);
     scene.add(formeLigne);
     scene.add(formeBezier);
+    if(document.getElementById("zoom").checked == true)
+    {
+        autoZoom(pointsControle);
+    }
     renderer.render(scene, camera);
 }
 
@@ -82,7 +87,7 @@ function addPointsBezier(pointsControle) {
 }
 
 function autoZoom(tabPoint){
-    let Xmin, Xmax, Ymin, Ymax;
+    let Xmin=999, Xmax=-999, Ymin=999, Ymax=-999;
     for(let i=0;i<tabPoint.length;i++){
         if(Xmin>tabPoint[i].x){
             Xmin = tabPoint[i].x;
@@ -97,8 +102,25 @@ function autoZoom(tabPoint){
             Ymax = tabPoint[i].y;
         }
     }
-    if()
-    camera.lookAt((Xmax-Xmin)/2, (Ymax-Ymin)/2, 0);
+    console.log(Xmin);
+    console.log(Xmax);
+    console.log(Ymin);
+    console.log(Ymax);
+    let Xmoy=(Xmax-Xmin)/2;
+    let Ymoy=(Ymax-Ymin)/2;
+    if(Xmoy>Ymoy){
+        let dezoom = Xmax-Xmin;
+        console.log(dezoom);
+        camera.position.set(Xmin+Xmoy, Ymin+Ymoy, dezoom);
+        camera.lookAt(Xmin+Xmoy,Ymin+Ymoy , dezoom);
+
+    }
+    else{
+        let dezoom = (Ymax-Ymin)*1.5;
+        camera.position.set(Xmin+Xmoy, Ymin+Ymoy, dezoom);
+        camera.lookAt(Xmin+Xmoy,Ymin+Ymoy , dezoom);
+
+    }
 
 }
 
