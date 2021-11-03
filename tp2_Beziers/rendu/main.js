@@ -113,9 +113,11 @@ function binomial(n, k) {
 }
 
 let tableauPoint = [];
-
+//ajoute un nouveau point au tablau de point
 function ajout(form) {
-    if (form.pointFigure.value === "new") {
+    if (form.xPointAjout.value === "" || form.yPointAjout.value === "") {
+    }
+    else if (form.pointFigure.value === "new") {
         tableauPoint.push(new THREE.Vector3(parseInt(form.xPointAjout.value), parseInt(form.yPointAjout.value), 0))
 
 
@@ -133,12 +135,14 @@ function ajout(form) {
     main(form);
 }
 
+
 function afficherPoint(form){
     if (form.pointFigure.value !== "new"){
         form.xPointAjout.value = tableauPoint[form.pointFigure.value - 1].x;
         form.yPointAjout.value = tableauPoint[form.pointFigure.value - 1].y;
     }
 }
+
 
 // permet d'afficher les courbes de Béziers en préselection dans le bonus
 function bonus(form) {
