@@ -19,26 +19,6 @@
             <!-- ajouter des points sur la figure -->
             <div class="DivVal">
                 <div>
-                    <!-- ajouter un point -->
-                    coordonné x du point 1 x = <input type="text" class="caseDonnee" name="xPoint1" value="">
-                    y = <input type="text" class="caseDonnee" name="yPoint1" value="">
-                </div>
-                <div>
-                    <!-- ajouter un point -->
-                    coordonné x du point 2 x = <input type="text" class="caseDonnee" name="xPoint2" value="">
-                    y = <input type="text" class="caseDonnee" name="yPoint2" value="">
-                </div>
-                <div>
-                    <!-- ajouter un point -->
-                    coordonné x du point 3 x = <input type="text" class="caseDonnee" name="xPoint3" value="" minlength="1">
-                    y = <input type="text" class="caseDonnee" name="yPoint3" value="">
-                </div>
-                <div>
-                    <!-- ajouter un point -->
-                    coordonné x du point 4 x = <input type="text" class="caseDonnee" name="xPoint4" value="">
-                    y =<input type="text" class="caseDonnee" name="yPoint4" value="">
-                </div>
-                <div>
                     Dézoom <input type="text" class="caseDonnee" name="dezoom" value="5">
                     &emsp;<label for="zoom">AutoZoom : </label>
                     <input type="checkbox" id="zoom" name="zoom" >
@@ -55,6 +35,21 @@
                 <option value="courbe2">Courbe de Bézier 2</option>
                 <option value="courbe3">Courbe de Bézier 3</option>
             </select>
+
+            <div>
+                <!-- ajouter un point -->
+                coordonné du point:  x = <input type="text" class="caseDonnee" name="xPointAjout" value="">
+                y =<input type="text" class="caseDonnee" name="yPointAjout" value="">
+            </div>
+
+            <!-- permet à l'utilisateur d'ajouter des points -->
+            <br>
+
+            Point : <select id="point" name="pointFigure">
+            <option value="new" selected>new</option>
+        </select>
+
+            <input id="ajoutPoint" type="button" class="btn btn-primary" value="ajouter">
         </label>
     </form>
 </div>
@@ -77,6 +72,23 @@
     // event sur le select de préselection
     bonusSelect.addEventListener('change', () => {
         bonus(form);
+    });
+
+    //on récupère le bouton pour ajouter les nouveaux points
+    let ajoutPoint = document.getElementById('ajoutPoint');
+
+    // lance la fonction au click sur le bouton submit
+    ajoutPoint.addEventListener('click', () => {
+        ajout(form);
+    });
+
+
+    //on récupère le bouton pour afficher les points deja enregistré
+    let affichePoint = document.getElementById('point');
+
+    // lance la fonction au click sur le bouton de choix du point
+    affichePoint.addEventListener('click', () => {
+        afficherPoint(form);
     });
 
 </script>
