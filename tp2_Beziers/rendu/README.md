@@ -1,6 +1,7 @@
-# TP1 Hello WebGl
+# TP2 WebGL 
+## Courbes de Bézier enWebGL
 
-#### Quentin LOURENCO, Amaury GIOT et Nicolas BARRAT
+#### Quentin LOURENCO, Amaury GIOT, Antonin VEROONE et Nicolas BARRAT
 
 Le main.js contient toutes les fonctions liées au canva 
 

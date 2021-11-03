@@ -10,87 +10,72 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
-<header id="head">
-    <p>Les 3 Monts <a class="lien" href="../../tp1_HelloWebGL/rendu/index.html">TP1</a> <a class="lien" href="./">TP2</a> </p>
-</header>
 <div class="masthead">
     <form id="form">
         <div class="DivVal">
-            <!-- ajouter des points sur la figure -->
             <div class="DivVal">
                 <div>
-                    Dézoom <input type="text" class="caseDonnee" name="dezoom" value="5">
-                    &emsp;<label for="zoom">AutoZoom : </label>
-                    <input type="checkbox" id="zoom" name="zoom" >
+                    <label>
+                        Dézoom
+                        <input type="text" class="caseDonnee" name="dezoom" value="5" id="dezoom" disabled>
+                    </label>
+                    &emsp;
+                    <label>
+                        AutoZoom :
+                        <input class="form-check-input" type="checkbox" id="zoom" checked>
+                    </label>
                 </div>
             </div>
-            <input id="submit" type="button" class="btn btn-primary" value="Dessiner">
         </div>
 
-        <label>
-            Courbes de Béziers bonus :
-            <select id="bonus" name="bonus">
-                <option value="bonus" selected>Bonus</option>
-                <option value="courbe1">Courbe de Bézier 1</option>
-                <option value="courbe2">Courbe de Bézier 2</option>
-                <option value="courbe3">Courbe de Bézier 3</option>
-            </select>
 
-            <div>
-                <!-- ajouter un point -->
-                coordonné du point:  x = <input type="text" class="caseDonnee" name="xPointAjout" value="">
-                y =<input type="text" class="caseDonnee" name="yPointAjout" value="">
-            </div>
-
+        <div>
             <!-- permet à l'utilisateur d'ajouter des points -->
-            <br>
+            <label>
+                Coordonné du point: x =
+                <input type="text" class="caseDonnee" name="xPointAjout" value="">
+            </label>
+            <label>
+                ; y =
+                <input type="text" class="caseDonnee" name="yPointAjout" value="">
+            </label>
+            &emsp;
+            <button id="ajoutPoint" type="button" class="btn btn-primary">Ajouter</button>
 
-            Point : <select id="point" name="pointFigure">
-            <option value="new" selected>new</option>
-        </select>
+            <!-- liste des points -->
+            <label>
+                Point :
+                <select id="point" name="pointFigure">
+                    <option value="new" selected>new</option>
+                </select>
+            </label>
+        </div>
 
-            <input id="ajoutPoint" type="button" class="btn btn-primary" value="ajouter">
-        </label>
+
+        <div>
+            <label>Courbes de Béziers bonus :
+                <select id="bonus" name="bonus">
+                    <option value="bonus" selected>Bonus</option>
+                    <option value="courbe1">Courbe de Bézier 1</option>
+                    <option value="courbe2">Courbe de Bézier 2</option>
+                    <option value="courbe3">Courbe de Bézier 3</option>
+                </select>
+            </label>
+        </div>
+
+
+        <div>
+                <button id="suppressionPoints" type="button" class="btn btn-primary">Supprimer tous les points</button>
+        </div>
     </form>
 </div>
+
 <script src="main.js"></script>
+<script src="initListeners.js"></script>
 
 <script>
-    // on récupère le bouton auquel appliquer l'événement du click, ainsi que le formulaire que l'on rentrera en paramètre du main
-    let form = document.getElementById('form');
-    let submit = document.getElementById('submit');
-
-    // on récupère le bouton pour afficher les nouveau points
-    let point = document.getElementById('point');
-
-    // lance la fonction au click sur le bouton submit
-    submit.addEventListener('click', () => {
-        main(form);
-    });
-
-    let bonusSelect = document.getElementById('bonus');
-    // event sur le select de préselection
-    bonusSelect.addEventListener('change', () => {
-        bonus(form);
-    });
-
-    //on récupère le bouton pour ajouter les nouveaux points
-    let ajoutPoint = document.getElementById('ajoutPoint');
-
-    // lance la fonction au click sur le bouton submit
-    ajoutPoint.addEventListener('click', () => {
-        ajout(form);
-    });
-
-
-    //on récupère le bouton pour afficher les points deja enregistré
-    let affichePoint = document.getElementById('point');
-
-    // lance la fonction au click sur le bouton de choix du point
-    affichePoint.addEventListener('click', () => {
-        afficherPoint(form);
-    });
-
+    // initialise le canva
+    initCanva(form);
 </script>
 </body>
 </html>

@@ -1,7 +1,11 @@
-const camera = new THREE.PerspectiveCamera(45, window.innerWidth * 0.7 / window.innerHeight*0.9, 1, 500);
-function main(form) {
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth * 0.6 / window.innerHeight, 1, 500);
+let tableauPoint = []; // tableau contenant les points de controle
+
+function main() {
+    let form = document.querySelector('form');
+
     const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth * 0.7, window.innerHeight*0.9);
+    renderer.setSize(window.innerWidth * 0.6, window.innerHeight);
 
     // permet de supprimer le canva s'il existe déjà pour l'actualiser
     if (document.querySelector('canvas') !== null) document.querySelector('canvas').remove();
@@ -20,7 +24,7 @@ function main(form) {
     // couleur et taille de chaque point
     const material = new THREE.PointsMaterial({
         color: 0xb1b1b1,
-        size: 0.1
+        size: 0.05
     });
 
     const materialLigne = new THREE.LineBasicMaterial({
@@ -43,10 +47,11 @@ function main(form) {
     scene.add(formeControle);
     scene.add(formeLigne);
     scene.add(formeBezier);
-    if(document.getElementById("zoom").checked == true)
-    {
+
+    // si l'autozoom est coché
+    if (document.getElementById("zoom").checked === true)
         autoZoom(tableauPoint);
-    }
+
     renderer.render(scene, camera);
 }
 
@@ -57,67 +62,84 @@ function addPointsBezier(pointsControle) {
 
     let x, y, degre = pointsControle.length - 1;
 
-    for (let t = 0; t < 1; t += 0.001) {
-        x = 0; y = 0;
-        for (let i = 0; i < pointsControle.length; i++) {
-            x += pointsControle[i].x * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
-            y += pointsControle[i].y * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
-        }
+    let precision = 0.001;
+    if (points.length !== 0)
+        for (let t = 0; t < 1; t += precision) {
+            x = 0;
+            y = 0;
+            for (let i = 0; i < pointsControle.length; i++) {
+                // calcule la coordonnée de ce point en fonction de la formule du polynom de Berstein
+                x += pointsControle[i].x * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
+                y += pointsControle[i].y * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
+            }
 
-        points.push(new THREE.Vector3(x, y, 0))
-    }
+            points.push(new THREE.Vector3(x, y, 0))
+        }
 
     return points;
 }
 
-function autoZoom(tabPoint){
-    let Xmin=999, Xmax=-999, Ymin=999, Ymax=-999;
-    for(let i=0;i<tabPoint.length;i++){
-        if(Xmin>tabPoint[i].x){
-            Xmin = tabPoint[i].x;
-        }
-        if(Xmax<tabPoint[i].x){
-            Xmax = tabPoint[i].x;
-        }
-        if(Ymin>tabPoint[i].y){
-            Ymin = tabPoint[i].y;
-        }
-        if(Ymax<tabPoint[i].y) {
-            Ymax = tabPoint[i].y;
-        }
-    }
-    let Xmoy=(Xmax-Xmin)/2;
-    let Ymoy=(Ymax-Ymin)/2;
-    if(Xmoy>Ymoy){
-        let dezoom = Xmax-Xmin;
-        camera.position.set(Xmin+Xmoy, Ymin+Ymoy, dezoom);
-        camera.lookAt(Xmin+Xmoy,Ymin+Ymoy , dezoom);
 
-    }
-    else{
-        let dezoom = (Ymax-Ymin)*1.5;
-        camera.position.set(Xmin+Xmoy, Ymin+Ymoy, dezoom);
-        camera.lookAt(Xmin+Xmoy,Ymin+Ymoy , dezoom);
-
-    }
-
-}
-
+// permet de calculer un coefficient binomial
 function binomial(n, k) {
     if ((typeof n !== 'number') || (typeof k !== 'number'))
         return false;
     let coeff = 1;
     for (let x = n - k + 1; x <= n; x++) coeff *= x;
-    for (x = 1; x <= k; x++) coeff /= x;
+    for (let x = 1; x <= k; x++) coeff /= x;
     return coeff;
 }
 
-let tableauPoint = [];
-//ajoute un nouveau point au tablau de point
-function ajout(form) {
-    if (form.xPointAjout.value === "" || form.yPointAjout.value === "") {
+
+// permet de dézoomer automatiquement
+function autoZoom(tabPoint) {
+    let Xmin = 999, Xmax = -999, Ymin = 999, Ymax = -999;
+    for (let i = 0; i < tabPoint.length; i++) {
+        if (Xmin > tabPoint[i].x)
+            Xmin = tabPoint[i].x;
+        else if (Xmax < tabPoint[i].x)
+            Xmax = tabPoint[i].x;
+        if (Ymin > tabPoint[i].y)
+            Ymin = tabPoint[i].y;
+        else if (Ymax < tabPoint[i].y)
+            Ymax = tabPoint[i].y;
     }
-    else if (form.pointFigure.value === "new") {
+    let Xmoy = (Xmax - Xmin) / 2;
+    let Ymoy = (Ymax - Ymin) / 2;
+    if (Xmoy > Ymoy) {
+        let dezoom = Xmax - Xmin;
+        camera.position.set(Xmin + Xmoy, Ymin + Ymoy, dezoom);
+        camera.lookAt(Xmin + Xmoy, Ymin + Ymoy, dezoom);
+
+    } else {
+        let dezoom = (Ymax - Ymin) * 1.5;
+        camera.position.set(Xmin + Xmoy, Ymin + Ymoy, dezoom);
+        camera.lookAt(Xmin + Xmoy, Ymin + Ymoy, dezoom);
+
+    }
+}
+
+
+// gère le click sur l'autozoom
+function clickAutoZoom() {
+    let checkAutoZoom = document.getElementById('zoom');
+    let inputDezoom = document.getElementById('dezoom');
+
+    if (checkAutoZoom.checked)
+        inputDezoom.setAttribute('disabled', '');
+    else inputDezoom.removeAttribute('disabled');
+
+
+    main();
+}
+
+
+//ajoute un nouveau point au tablau de point
+function ajout() {
+    let form = document.querySelector('form');
+
+    if (form.xPointAjout.value === "" || form.yPointAjout.value === "") {
+    } else if (form.pointFigure.value === "new") {
         tableauPoint.push(new THREE.Vector3(parseInt(form.xPointAjout.value), parseInt(form.yPointAjout.value), 0))
 
 
@@ -132,12 +154,15 @@ function ajout(form) {
     } else {
         tableauPoint[form.pointFigure.value - 1] = new THREE.Vector3(parseInt(form.xPointAjout.value), parseInt(form.yPointAjout.value), 0)
     }
-    main(form);
+
+    main();
 }
 
 
-function afficherPoint(form){
-    if (form.pointFigure.value !== "new"){
+function afficherPoint() {
+    let form = document.querySelector('form');
+
+    if (form.pointFigure.value !== "new") {
         form.xPointAjout.value = tableauPoint[form.pointFigure.value - 1].x;
         form.yPointAjout.value = tableauPoint[form.pointFigure.value - 1].y;
     }
@@ -145,20 +170,47 @@ function afficherPoint(form){
 
 
 // permet d'afficher les courbes de Béziers en préselection dans le bonus
-function bonus(form) {
+function bonus() {
+    let form = document.querySelector('form');
+
     switch (form.bonus.value) {
         case 'courbe1':
+            tableauPoint = [
+                {x: 0, y: 0},
+                {x: 0, y: 1},
+                {x: 1, y: 1},
+                {x: 1, y: 0}
+            ];
             break;
 
         case 'courbe2':
+            tableauPoint = [
+                {x: 0, y: 0},
+                {x: 1, y: 0},
+                {x: 0, y: 1},
+                {x: 1, y: 1}
+            ];
             break;
 
         case 'courbe3':
+            tableauPoint = [
+                {x: 0, y: 0},
+                {x: 1, y: 1},
+                {x: 0, y: 1},
+                {x: 1, y: 0}
+            ];
             break;
 
         default:
             break;
     }
 
-    // main(form);
+    main();
+}
+
+
+// permet d'initialiser la zone de dessin / supprimer les points
+function initCanva() {
+    tableauPoint = [];
+    main();
 }
