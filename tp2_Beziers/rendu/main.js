@@ -1,6 +1,15 @@
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth * 0.6 / window.innerHeight, 1, 500);
 let tableauPoint = []; // tableau contenant les points de controle
 
+// permet d'initialiser la zone de dessin / supprimer les points
+function initCanva() {
+    tableauPoint = [];
+    allPointSelect();
+    main();
+}
+
+
+// affiche les points et la courbe de béziers
 function main() {
     let form = document.querySelector('form');
 
@@ -120,15 +129,14 @@ function autoZoom(tabPoint) {
 }
 
 
+
 // gère le click sur l'autozoom
 function clickAutoZoom() {
     let checkAutoZoom = document.getElementById('zoom');
     let inputDezoom = document.getElementById('dezoom');
 
-    if (checkAutoZoom.checked)
-        inputDezoom.setAttribute('disabled', '');
+    if (checkAutoZoom.checked) inputDezoom.setAttribute('disabled', '');
     else inputDezoom.removeAttribute('disabled');
-
 
     main();
 }
@@ -155,16 +163,61 @@ function ajout() {
         tableauPoint[form.pointFigure.value - 1] = new THREE.Vector3(parseInt(form.xPointAjout.value), parseInt(form.yPointAjout.value), 0)
     }
 
+    allPointSelect();
+
     main();
 }
 
 
+// supprime le point affiché
+function removePointSelect() {
+    let div = document.getElementsByName('pointFigure')[0];
+    if (div.value !== 'new') {
+        tableauPoint = tableauPoint.slice(0, div.value - 1).concat(tableauPoint.slice(div.value, tableauPoint.length));
+        div.children[div.value].remove();
+        console.log(tableauPoint);
+    }
+
+    allPointSelect();
+
+    main();
+}
+
+
+// remet tous les points dans le select
+function allPointSelect() {
+    let div, option;
+    div = document.getElementsByName('pointFigure')[0];
+
+    const tmp = div.children.length
+    for (let i = 1; i < tmp; i++)
+        div.children[1].remove();
+
+    for (const [index, point] of tableauPoint.entries()) {
+        option = document.createElement('option');
+        div.appendChild(option);
+        option.setAttribute('value', String(index + 1));
+        option.textContent =
+            'Point ' + (index + 1) + ' (' + point.x + ', ' + point.y + ')';
+    }
+
+    afficherPoint();
+}
+
+
+// affiche le point clické pour le modifier
 function afficherPoint() {
     let form = document.querySelector('form');
+    let boutonSuppr = document.getElementById('suppressionPoint');
 
     if (form.pointFigure.value !== "new") {
         form.xPointAjout.value = tableauPoint[form.pointFigure.value - 1].x;
         form.yPointAjout.value = tableauPoint[form.pointFigure.value - 1].y;
+        boutonSuppr.removeAttribute('disabled');
+    } else {
+        form.xPointAjout.value = '';
+        form.yPointAjout.value = '';
+        boutonSuppr.setAttribute('disabled', '');
     }
 }
 
@@ -205,12 +258,7 @@ function bonus() {
             break;
     }
 
-    main();
-}
+    allPointSelect();
 
-
-// permet d'initialiser la zone de dessin / supprimer les points
-function initCanva() {
-    tableauPoint = [];
     main();
 }

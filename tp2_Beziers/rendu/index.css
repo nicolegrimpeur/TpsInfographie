@@ -2,12 +2,11 @@
 
 body {
     margin: 0;
-    /* cache la barre pour descendre la page */
+    /* cache la barre de défilement */
     overflow: hidden;
 }
 
 /* taille des éléments html */
-
 select {
     /*width: 5vw;*/
 }

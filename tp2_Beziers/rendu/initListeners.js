@@ -25,6 +25,12 @@ affichePoint.addEventListener('change', () => {
 });
 
 
+// bouton pour supprimer un point
+let supprPoint = document.getElementById('suppressionPoint');
+supprPoint.addEventListener('click', () => {
+    removePointSelect();
+});
+
 // bouton de suppression des points
 let suppressionPoints = document.getElementById('suppressionPoints');
 
