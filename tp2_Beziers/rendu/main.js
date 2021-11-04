@@ -43,6 +43,8 @@ function main() {
     // on ajoute tous les points
     const pointsBezier = addPointsBezier(tableauPoint);
 
+    console.log(tableauPoint);
+
     // créé un buffer de points à partir du tableau de points
     const geometryControle = new THREE.BufferGeometry().setFromPoints(tableauPoint);
     const geometryBezier = new THREE.BufferGeometry().setFromPoints(pointsBezier);
@@ -101,30 +103,37 @@ function binomial(n, k) {
 
 
 // permet de dézoomer automatiquement
-function autoZoom(tabPoint) {
-    let Xmin = 999, Xmax = -999, Ymin = 999, Ymax = -999;
-    for (let i = 0; i < tabPoint.length; i++) {
-        if (Xmin > tabPoint[i].x)
-            Xmin = tabPoint[i].x;
-        else if (Xmax < tabPoint[i].x)
-            Xmax = tabPoint[i].x;
-        if (Ymin > tabPoint[i].y)
-            Ymin = tabPoint[i].y;
-        else if (Ymax < tabPoint[i].y)
-            Ymax = tabPoint[i].y;
-    }
-    let Xmoy = (Xmax - Xmin) / 2;
-    let Ymoy = (Ymax - Ymin) / 2;
-    if (Xmoy > Ymoy) {
-        let dezoom = Xmax - Xmin;
-        camera.position.set(Xmin + Xmoy, Ymin + Ymoy, dezoom);
-        camera.lookAt(Xmin + Xmoy, Ymin + Ymoy, dezoom);
-
+function autoZoom() {
+    if (tableauPoint.length === 1) {
+        camera.position.set(tableauPoint[0].x, tableauPoint[0].y, 1);
+        camera.lookAt(tableauPoint[0].x, tableauPoint[0].y, 1);
     } else {
-        let dezoom = (Ymax - Ymin) * 1.5;
-        camera.position.set(Xmin + Xmoy, Ymin + Ymoy, dezoom);
-        camera.lookAt(Xmin + Xmoy, Ymin + Ymoy, dezoom);
+        let Xmin = 999., Xmax = -999., Ymin = 999., Ymax = -999.;
+        for (let i = 0; i < tableauPoint.length; i++) {
+            if (Xmin > tableauPoint[i].x)
+                Xmin = tableauPoint[i].x;
+            if (Xmax < tableauPoint[i].x)
+                Xmax = tableauPoint[i].x;
+            if (Ymin > tableauPoint[i].y)
+                Ymin = tableauPoint[i].y;
+            if (Ymax < tableauPoint[i].y)
+                Ymax = tableauPoint[i].y;
+        }
 
+        let Xmoy = (Xmax - Xmin) / 2;
+        let Ymoy = (Ymax - Ymin) / 2;
+
+        if (Xmoy > Ymoy) {
+            let dezoom = Xmax - Xmin;
+            camera.position.set(Xmin + Xmoy, Ymin + Ymoy, dezoom);
+            camera.lookAt(Xmin + Xmoy, Ymin + Ymoy, dezoom);
+
+        } else {
+            let dezoom = (Ymax - Ymin) * 1.5;
+            camera.position.set(Xmin + Xmoy, Ymin + Ymoy, dezoom);
+            camera.lookAt(Xmin + Xmoy, Ymin + Ymoy, dezoom);
+
+        }
     }
 }
 
@@ -148,17 +157,7 @@ function ajout() {
 
     if (form.xPointAjout.value === "" || form.yPointAjout.value === "") {
     } else if (form.pointFigure.value === "new") {
-        tableauPoint.push(new THREE.Vector3(parseInt(form.xPointAjout.value), parseInt(form.yPointAjout.value), 0))
-
-
-        let div = document.getElementsByName('pointFigure');
-        let option = document.createElement('option');
-        div[0].appendChild(option);
-        option.setAttribute('value', tableauPoint.length);
-        option.textContent = 'Point ' + tableauPoint.length;
-
-        form.xPointAjout.value = '';
-        form.yPointAjout.value = '';
+        tableauPoint.push(new THREE.Vector3(parseInt(form.xPointAjout.value), parseInt(form.yPointAjout.value), 0));
     } else {
         tableauPoint[form.pointFigure.value - 1] = new THREE.Vector3(parseInt(form.xPointAjout.value), parseInt(form.yPointAjout.value), 0)
     }
