@@ -166,17 +166,6 @@ function ajout() {
 }
 
 
-// modifie le texte du bouton ajouter
-function changeAjouter() {
-    let form = document.querySelector('form');
-    let btnAjouter = document.getElementById('ajoutPoint');
-
-    if (form.xPointAjout.value !== "" || form.yPointAjout.value !== "")
-        btnAjouter.textContent = 'Modifier';
-    else btnAjouter.textContent = 'Ajouter';
-}
-
-
 // supprime le point affiché
 function removePointSelect() {
     let div = document.getElementsByName('pointFigure')[0];
@@ -228,6 +217,17 @@ function afficherPoint() {
     }
 
     changeAjouter();
+}
+
+
+// modifie le texte du bouton ajouter
+function changeAjouter() {
+    let form = document.querySelector('form');
+    let btnAjouter = document.getElementById('ajoutPoint');
+
+    if (form.xPointAjout.value !== "" || form.yPointAjout.value !== "")
+        btnAjouter.textContent = 'Modifier';
+    else btnAjouter.textContent = 'Ajouter';
 }
 
 

@@ -14,6 +14,9 @@ et de déplacer la caméra pour vous placer directement sur celle-ci
 Cliquez ensuite sur ajouter pour afficher votre point et l'ajouter à la liste de points
       1) Une fois votre point ajouté, celui-ci sera automatiquement affiché
       et la courbe de Bézier dessiné
+
+   4) Vous pouvez choisir dans la liste de points le point que vous souhaitez Modifier / Supprimer
       
-   4) Dans "Courbes de Béziers bonus", vous aurez la possibilité de choisir un ensemble de points parmis trois
+   1) Dans "Courbes de Béziers bonus", vous aurez la possibilité de choisir un ensemble de points parmis trois
       1) Chaque ensemble produit une courbe de Béziers différente
+      2) Les points ajoutés sont ensuite modifiables si souhaité
