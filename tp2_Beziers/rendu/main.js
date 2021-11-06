@@ -43,8 +43,6 @@ function main() {
     // on ajoute tous les points
     const pointsBezier = addPointsBezier(tableauPoint);
 
-    console.log(tableauPoint);
-
     // créé un buffer de points à partir du tableau de points
     const geometryControle = new THREE.BufferGeometry().setFromPoints(tableauPoint);
     const geometryBezier = new THREE.BufferGeometry().setFromPoints(pointsBezier);
@@ -168,13 +166,23 @@ function ajout() {
 }
 
 
+// modifie le texte du bouton ajouter
+function changeAjouter() {
+    let form = document.querySelector('form');
+    let btnAjouter = document.getElementById('ajoutPoint');
+
+    if (form.xPointAjout.value !== "" || form.yPointAjout.value !== "")
+        btnAjouter.textContent = 'Modifier';
+    else btnAjouter.textContent = 'Ajouter';
+}
+
+
 // supprime le point affiché
 function removePointSelect() {
     let div = document.getElementsByName('pointFigure')[0];
     if (div.value !== 'new') {
         tableauPoint = tableauPoint.slice(0, div.value - 1).concat(tableauPoint.slice(div.value, tableauPoint.length));
         div.children[div.value].remove();
-        console.log(tableauPoint);
     }
 
     allPointSelect();
@@ -218,6 +226,8 @@ function afficherPoint() {
         form.yPointAjout.value = '';
         boutonSuppr.setAttribute('disabled', '');
     }
+
+    changeAjouter();
 }
 
 
