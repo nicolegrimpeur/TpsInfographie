@@ -35,6 +35,10 @@ function main() {
         color: 0xb1b1b1,
         size: 0.05
     });
+    const materialBezier = new THREE.PointsMaterial({
+        color: 0xb1b1b1,
+        size: 0.01
+    });
 
     const materialLigne = new THREE.LineBasicMaterial({
         color: 0xb1b1b1
@@ -50,7 +54,7 @@ function main() {
     // enregistre tous les points
     const formeControle = new THREE.Points(geometryControle, material);
     const formeLigne = new THREE.Line(geometryControle, materialLigne);
-    const formeBezier = new THREE.Points(geometryBezier, material);
+    const formeBezier = new THREE.Points(geometryBezier, materialBezier);
 
     // affiche tous les points
     scene.add(formeControle);
