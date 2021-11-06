@@ -72,7 +72,7 @@ function addPointsBezier(pointsControle) {
     let x, y, degre = pointsControle.length - 1;
 
     let precision = 0.001;
-    if (points.length !== 0)
+    if (pointsControle.length !== 0)
         for (let t = 0; t < 1; t += precision) {
             x = 0;
             y = 0;
