@@ -94,8 +94,10 @@ function addPointsBSpline(pointsControle) {
             y = 0;
             for (let i = 0; i < pointsControle.length; i++) {
                 // calcule la coordonnée de ce point en fonction de la formule du polynom de Berstein
-                x += pointsControle[i].x * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
-                y += pointsControle[i].y * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
+                x += pointsControle[i].x * bSplineRecur(degre, i, t);
+                y += pointsControle[i].y * bSplineRecur(degre, i, t);
+                // x += pointsControle[i].x * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
+                // y += pointsControle[i].y * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
             }
 
             points.push(new THREE.Vector3(x, y, 0))
