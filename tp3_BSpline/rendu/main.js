@@ -1,9 +1,11 @@
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth * 0.6 / window.innerHeight, 1, 500);
 let tableauPoint = []; // tableau contenant les points de controle
+let vecteurNoeud = [];
 
 // permet d'initialiser la zone de dessin / supprimer les points
 function initCanva() {
     tableauPoint = [];
+    vecteurNoeud = abSort(tableauPoint);
     allPointSelect();
     main();
 }
@@ -44,8 +46,10 @@ function main() {
         color: 0xb1b1b1
     });
 
+    vecteurNoeud = abSort(tableauPoint);
+
     // on ajoute tous les points
-    const pointsBezier = addPointsBezier(tableauPoint);
+    const pointsBezier = addPointsBSpline(tableauPoint);
 
     // créé un buffer de points à partir du tableau de points
     const geometryControle = new THREE.BufferGeometry().setFromPoints(tableauPoint);
@@ -66,6 +70,53 @@ function main() {
         autoZoom(tableauPoint);
 
     renderer.render(scene, camera);
+}
+
+function abSort(pointsControle) {
+    let tabAbscisse = [];
+    for (let i = 0; i < pointsControle.length; i++) {
+        tabAbscisse.push(pointsControle[i].x);
+
+    }
+    tabAbscisse.sort();
+    return tabAbscisse;
+}
+
+function addPointsBSpline(pointsControle) {
+    const points = [];
+
+    let x, y, degre = pointsControle.length - 1;
+
+    let precision = 0.001;
+    if (pointsControle.length !== 0)
+        for (let t = 0; t < 1; t += precision) {
+            x = 0;
+            y = 0;
+            for (let i = 0; i < pointsControle.length; i++) {
+                // calcule la coordonnée de ce point en fonction de la formule du polynom de Berstein
+                x += pointsControle[i].x * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
+                y += pointsControle[i].y * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
+            }
+
+            points.push(new THREE.Vector3(x, y, 0))
+        }
+
+    return points;
+}
+
+function bSplineRecur(m, i, t) {
+    if (m === 0) {
+        if (vecteurNoeud[i] <= t && t <= vecteurNoeud[i + 1]) {
+            return 1;
+        } else {
+            return 0;
+        }
+    } else {
+        return ((t - vecteurNoeud[i]) / (vecteurNoeud[i + m] - vecteurNoeud[i])) *
+            bSplineRecur(m - 1, i, t) +
+            ((vecteurNoeud[i + m + 1] - t) / (vecteurNoeud[i + m + 1] - vecteurNoeud[i + 1])) *
+            bSplineRecur(m - 1, i + 1, t);
+    }
 }
 
 
@@ -138,7 +189,6 @@ function autoZoom() {
         }
     }
 }
-
 
 
 // gère le click sur l'autozoom
