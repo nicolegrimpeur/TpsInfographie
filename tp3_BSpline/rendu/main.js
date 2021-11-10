@@ -82,42 +82,61 @@ function abSort(pointsControle) {
     return tabAbscisse;
 }
 
-function addPointsBSpline(pointsControle) {
+async function addPointsBSpline(pointsControle) {
     const points = [];
 
     let x, y, degre = pointsControle.length - 1;
 
-    let precision = 0.001;
-    if (pointsControle.length !== 0)
-        for (let t = 0; t < 1; t += precision) {
-            x = 0;
-            y = 0;
-            for (let i = 0; i < pointsControle.length; i++) {
-                // calcule la coordonnée de ce point en fonction de la formule du polynom de Berstein
-                x += pointsControle[i].x * bSplineRecur(degre, i, t);
-                y += pointsControle[i].y * bSplineRecur(degre, i, t);
-                // x += pointsControle[i].x * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
-                // y += pointsControle[i].y * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
-            }
+    //console.log(pointsControle, vecteurNoeud);
 
-            points.push(new THREE.Vector3(x, y, 0))
+    let precision = 0.1;
+    if (pointsControle.length !== 0) {
+        // for (let t = 0; t < 1; t += precision) {
+        let t = 0;
+        x = 0;
+        y = 0;
+        for (let i = 0; i < pointsControle.length - degre; i++) {
+            // calcule la coordonnée de ce point en fonction de la formule du polynom de Berstein
+            //console.log(bSplineRecur(degre, i, t));
+            x += pointsControle[i].x * await bSplineRecur(degre, i, t);
+            y += pointsControle[i].y * await bSplineRecur(degre, i, t);
+            // x += pointsControle[i].x * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
+            // y += pointsControle[i].y * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
         }
+        //console.log(x, y);
+        points.push(new THREE.Vector3(x, y, 0))
+        // }
+    }
 
     return points;
 }
 
-function bSplineRecur(m, i, t) {
+async function bSplineRecur(m, i, t) {
+    console.log(m, i);
     if (m === 0) {
-        if (vecteurNoeud[i] <= t && t <= vecteurNoeud[i + 1]) {
+        console.log(t, i, vecteurNoeud[i], vecteurNoeud[i + 1]);
+        if (vecteurNoeud[i] <= t && t < vecteurNoeud[i + 1]) {
+            console.log('sortie' + 1);
             return 1;
         } else {
             return 0;
         }
     } else {
-        return ((t - vecteurNoeud[i]) / (vecteurNoeud[i + m] - vecteurNoeud[i])) *
-            bSplineRecur(m - 1, i, t) +
-            ((vecteurNoeud[i + m + 1] - t) / (vecteurNoeud[i + m + 1] - vecteurNoeud[i + 1])) *
-            bSplineRecur(m - 1, i + 1, t);
+        if (
+            (vecteurNoeud[i + m] - vecteurNoeud[i]) === 0 ||
+            (vecteurNoeud[i + m + 1] - vecteurNoeud[i + 1]) === 0
+        ) return 0;
+        else {
+            // console.log('_')
+            // console.log(((t - vecteurNoeud[i]) / (vecteurNoeud[i + m] - vecteurNoeud[i])) *
+            //     bSplineRecur(m - 1, i, t) +
+            //     ((vecteurNoeud[i + m + 1] - t) / (vecteurNoeud[i + m + 1] - vecteurNoeud[i + 1])) *
+            //     bSplineRecur(m - 1, i + 1, t));
+            return ((t - vecteurNoeud[i]) / (vecteurNoeud[i + m] - vecteurNoeud[i])) *
+                await bSplineRecur(m - 1, i, t) +
+                ((vecteurNoeud[i + m + 1] - t) / (vecteurNoeud[i + m + 1] - vecteurNoeud[i + 1])) *
+                await bSplineRecur(m - 1, i + 1, t);
+        }
     }
 }
 
