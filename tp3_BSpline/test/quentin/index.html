@@ -2,9 +2,84 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>TP2 WebGl</title>
+    <link rel="stylesheet" href="index.css">
+    <!-- CSS only -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
+<div class="masthead">
+    <form id="form">
+        <div class="DivVal">
+            <div class="DivVal">
+                <div>
+                    <label>
+                        Dézoom
+                        <input type="text" class="caseDonnee" name="dezoom" value="5" id="dezoom" disabled>
+                    </label>
+                    &emsp;
+                    <label>
+                        AutoZoom :
+                        <input class="form-check-input" type="checkbox" id="zoom" checked>
+                    </label>
+                </div>
+            </div>
+        </div>
 
+
+        <div>
+            <!-- permet à l'utilisateur d'ajouter des points -->
+            <label>
+                Coordonné du point: x =
+                <input type="text" class="caseDonnee" name="xPointAjout" value="">
+            </label>
+            <label>
+                ; y =
+                <input type="text" class="caseDonnee" name="yPointAjout" value="">
+            </label>
+            &emsp;
+            <button id="ajoutPoint" type="button" class="btn btn-primary">Ajouter</button>
+
+            <br><br>
+
+            <!-- liste des points -->
+            <label>
+                Liste de points :
+                <select id="point" name="pointFigure">
+                    <option value="new" selected>new</option>
+                </select>
+            </label>
+            &emsp;
+            <button id="suppressionPoint" type="button" class="btn btn-primary" disabled>Supprimer</button>
+        </div>
+
+
+        <div>
+            <label>Courbes de Béziers bonus :
+                <select id="bonus" name="bonus">
+                    <option value="bonus" selected>Bonus</option>
+                    <option value="courbe1">Courbe de Bézier 1</option>
+                    <option value="courbe2">Courbe de Bézier 2</option>
+                    <option value="courbe3">Courbe de Bézier 3</option>
+                </select>
+            </label>
+        </div>
+
+
+        <div>
+            <button id="suppressionPoints" type="button" class="btn btn-primary">Supprimer tous les points</button>
+        </div>
+    </form>
+</div>
+
+<script src="main.js"></script>
+<script src="initListeners.js"></script>
+
+<script>
+    // initialise le canva
+    initCanva(form);
+</script>
 </body>
 </html>
