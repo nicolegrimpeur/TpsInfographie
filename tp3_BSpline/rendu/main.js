@@ -49,7 +49,7 @@ function main() {
     vecteurNoeud = abSort(tableauPoint);
 
     // on ajoute tous les points
-    const pointsBezier = addPointsBSpline(tableauPoint);
+    const pointsBezier = addPointsDeBoor(tableauPoint);
 
     // créé un buffer de points à partir du tableau de points
     const geometryControle = new THREE.BufferGeometry().setFromPoints(tableauPoint);
@@ -82,12 +82,54 @@ function abSort(pointsControle) {
     return tabAbscisse;
 }
 
+async function addPointsDeBoor(pointsControle) {
+    const points = [];
+
+    let x, y, degre = pointsControle.length - 1, ordre = degre++, alpha;
+    // let x, y, degre = 2, ordre = degre++;
+
+    let precision = 0.1;
+    if (pointsControle.length !== 0) {
+        for (let t = 0; t < 1; t += precision) {
+            // let t = 0;
+            x = 0;
+            y = 0;
+            for (let i = 0; i < pointsControle.length; i++) {
+                x += await deBoor(pointsControle, ordre, degre, pointsControle[i].x);
+                y += await deBoor(pointsControle, ordre, degre, pointsControle[i].y);
+            }
+            console.log(x, y);
+            points.push(new THREE.Vector3(x, y, 0))
+        }
+    }
+
+    return points;
+}
+
+async function deBoor(pointsControle, ordre, degre, pos) {
+    let d = [], alpha;
+
+    for (let i = 0; i <= degre; i++) {
+        d.push(pointsControle[i + ordre - degre]);
+    }
+    console.log(d);
+    for (let r = 1; r <= degre; r++) {
+        for (let j = degre; j >= r - 1; j--) {
+            alpha = (pos - vecteurNoeud[j + ordre - degre]) / (vecteurNoeud[j + 1 + ordre - r] - vecteurNoeud[j + ordre - degre]);
+            d[j] = (1 - alpha) * d[j - 1] + alpha * d[j];
+        }
+    }
+
+    return d[degre];
+}
+
 async function addPointsBSpline(pointsControle) {
     const points = [];
 
-    let x, y, degre = pointsControle.length - 1;
+    // let x, y, degre = pointsControle.length - 1;
+    let x, y, degre = 2;
 
-    //console.log(pointsControle, vecteurNoeud);
+    console.log(pointsControle, vecteurNoeud);
 
     let precision = 0.1;
     if (pointsControle.length !== 0) {
@@ -96,14 +138,13 @@ async function addPointsBSpline(pointsControle) {
         x = 0;
         y = 0;
         for (let i = 0; i < pointsControle.length - degre; i++) {
-            // calcule la coordonnée de ce point en fonction de la formule du polynom de Berstein
-            //console.log(bSplineRecur(degre, i, t));
+            // calcule la coordonnée de ce point en fonction de la formule du polynome de Berstein
+            // console.log('debut');
+            console.log(bSplineRecur(degre, i, t));
             x += pointsControle[i].x * await bSplineRecur(degre, i, t);
             y += pointsControle[i].y * await bSplineRecur(degre, i, t);
-            // x += pointsControle[i].x * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
-            // y += pointsControle[i].y * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
         }
-        //console.log(x, y);
+        console.log(x, y);
         points.push(new THREE.Vector3(x, y, 0))
         // }
     }
@@ -112,34 +153,40 @@ async function addPointsBSpline(pointsControle) {
 }
 
 async function bSplineRecur(m, i, t) {
-    console.log(m, i);
+    // console.log(m, i, t);
     if (m === 0) {
-        console.log(t, i, vecteurNoeud[i], vecteurNoeud[i + 1]);
+        // console.log(t, i, vecteurNoeud[i], vecteurNoeud[i + 1]);
+        // if (vecteurNoeud[i] <= t && (t < vecteurNoeud[i + 1] || vecteurNoeud[i + 1] === undefined)) {
         if (vecteurNoeud[i] <= t && t < vecteurNoeud[i + 1]) {
-            console.log('sortie' + 1);
+            // console.log('sortie' + 1);
             return 1;
         } else {
+            // console.log('sorti 0');
             return 0;
         }
     } else {
         if (
-            (vecteurNoeud[i + m] - vecteurNoeud[i]) === 0 ||
-            (vecteurNoeud[i + m + 1] - vecteurNoeud[i + 1]) === 0
-        ) return 0;
-        else {
+            !(0 <= m && m <= vecteurNoeud.length - 1) ||
+            !(0 <= i && i <= vecteurNoeud.length - m - 1)
+        ) {
+            // console.log('erreur 0')
+            return 0;
+        } else {
             // console.log('_')
-            // console.log(((t - vecteurNoeud[i]) / (vecteurNoeud[i + m] - vecteurNoeud[i])) *
-            //     bSplineRecur(m - 1, i, t) +
-            //     ((vecteurNoeud[i + m + 1] - t) / (vecteurNoeud[i + m + 1] - vecteurNoeud[i + 1])) *
-            //     bSplineRecur(m - 1, i + 1, t));
-            return ((t - vecteurNoeud[i]) / (vecteurNoeud[i + m] - vecteurNoeud[i])) *
-                await bSplineRecur(m - 1, i, t) +
-                ((vecteurNoeud[i + m + 1] - t) / (vecteurNoeud[i + m + 1] - vecteurNoeud[i + 1])) *
-                await bSplineRecur(m - 1, i + 1, t);
+            // console.log(m, i);
+            // console.log(await bSplineRecur(m - 1, i, t));
+            // console.log('else');
+            // console.log('i + m : ', vecteurNoeud[i + m + 1 - 1], i, m, i + m + 1);
+            // console.log('i - 1 : ', vecteurNoeud[i - 1], i - 1);
+            let premierTerme = ((t - vecteurNoeud[i]) / (vecteurNoeud[i + m] - vecteurNoeud[i])) * await bSplineRecur(m - 1, i, t);
+            // console.log(m, i, t, await bSplineRecur(m - 1, i, t));
+            let deuxiemeTerme = ((vecteurNoeud[i + m + 1] - t) / (vecteurNoeud[i + m + 1] - vecteurNoeud[i + 1])) * await bSplineRecur(m - 1, i + 1, t);
+            // return (isNaN(premierTerme) ? 0 : premierTerme) + (isNaN(deuxiemeTerme) ? 0 : deuxiemeTerme);
+            return ((t - vecteurNoeud[i]) / (vecteurNoeud[i + m] - vecteurNoeud[i])) * await bSplineRecur(m - 1, i, t) +
+                ((vecteurNoeud[i + m + 1] - t) / (vecteurNoeud[i + m + 1] - vecteurNoeud[i + 1])) * await bSplineRecur(m - 1, i + 1, t)
         }
     }
 }
-
 
 // retourne le tableau avec les points de la courbe de Bézier
 function addPointsBezier(pointsControle) {
