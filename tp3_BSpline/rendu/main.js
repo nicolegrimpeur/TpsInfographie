@@ -49,7 +49,7 @@ function main() {
     vecteurNoeud = abSort(tableauPoint);
 
     // on ajoute tous les points
-    const pointsBezier = addPointsDeBoor(tableauPoint);
+    const pointsBezier = addPointsBSpline(tableauPoint);
 
     // créé un buffer de points à partir du tableau de points
     const geometryControle = new THREE.BufferGeometry().setFromPoints(tableauPoint);
