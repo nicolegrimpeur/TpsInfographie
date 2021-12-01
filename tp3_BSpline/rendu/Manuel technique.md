@@ -12,9 +12,10 @@
 - Vous trouvez dans initListeners.js tous les listeners sur la page, notamment concernant les boutons, selects et checkBox
 
 - Dans le main.js, vous retrouvez :
-  - Deux variables globales :
+  - Trois variables globales :
     - camera : permet de modifier dans tous le fichier js la caméra, permet notamment de modifier le zoom
     - tableauPoint : permet de stocker les points de contrôles
+    - vecteurNoeud : permet de stocker le vecteur de noeud
     
   - De nombreuses fonctions :
     - initCanva : initialise / remet à 0 la liste de point et le canva
@@ -22,8 +23,14 @@
       - les points de contrôle
       - le polygone de contrôle
       - la courbe de Béziers
-    - addPointBezier : initialise la liste de points de la courbe de Béziers à partir du tableau de points de contrôle
-    - binomial : permet de renvoyer le coefficient binomial de n, k
+    - abSort : retourne les coordonnées x des points ajoutés trié dans l'ordre croissant (permet de récupérer le vecteur de noeud)
+    - addPointDeBoor : initialise la liste de points de la courbe de Béziers à partir du tableau de points de contrôle 
+    avec la méthode de l'algorithme de De Boor (non fonctionnelle)
+    - deBoor : retourne N (non fonctionnelle)
+    - addPointsBSpline : initialise la liste de points de la courbe de Béziers à partir du tableau de points de contrôle
+      avec la fonction bSpline (non fonctionnelle)
+    - s : autre implémentation de addPointsBSpline (non fonctionnelle)
+    - bSplineRecur : retourne N
     - autoZoom : modifie le zoom de la figure pour se fixer sur la zone à afficher
     - clickAutoZoom : gère le click sur le bouton autoZoom et active / désactive l'input permettant de modifier manuellement le zoom
     - ajout : gère l'ajout / la modification de point

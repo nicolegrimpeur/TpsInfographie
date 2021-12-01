@@ -1,9 +1,11 @@
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth * 0.6 / window.innerHeight, 1, 500);
 let tableauPoint = []; // tableau contenant les points de controle
+let vecteurNoeud = []; // tableau contenant le vecteur noeud
 
 // permet d'initialiser la zone de dessin / supprimer les points
 function initCanva() {
     tableauPoint = [];
+    vecteurNoeud = abSort(tableauPoint);
     allPointSelect();
     main();
 }
@@ -44,8 +46,11 @@ function main() {
         color: 0xb1b1b1
     });
 
+    vecteurNoeud = abSort(tableauPoint);
+
     // on ajoute tous les points
-    const pointsBezier = addPointsBezier(tableauPoint);
+    // const pointsBezier = addPointsBSpline(tableauPoint);
+    const pointsBezier = addPointsDeBoor(tableauPoint);
 
     // créé un buffer de points à partir du tableau de points
     const geometryControle = new THREE.BufferGeometry().setFromPoints(tableauPoint);
@@ -68,41 +73,120 @@ function main() {
     renderer.render(scene, camera);
 }
 
+// tri les abscisses des points pour en ressortir un vecteur noeud
+function abSort(pointsControle) {
+    let tabAbscisse = [];
+    for (let i = 0; i < pointsControle.length; i++) {
+        tabAbscisse.push(pointsControle[i].x);
+    }
+    tabAbscisse.sort();
+    return tabAbscisse;
+}
 
-// retourne le tableau avec les points de la courbe de Bézier
-function addPointsBezier(pointsControle) {
+// début implémentation de la méthode de de boor
+async function addPointsDeBoor(pointsControle) {
     const points = [];
 
-    let x, y, degre = pointsControle.length - 1;
+    let x, y, degre = pointsControle.length - 1, ordre = degre++, alpha;
 
-    let precision = 0.001;
-    if (pointsControle.length !== 0)
-        for (let t = 0; t < 1; t += precision) {
+    if (pointsControle.length !== 0) {
+        for (let t of vecteurNoeud) {
             x = 0;
             y = 0;
-            for (let i = 0; i < pointsControle.length; i++) {
-                // calcule la coordonnée de ce point en fonction de la formule du polynom de Berstein
-                x += pointsControle[i].x * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
-                y += pointsControle[i].y * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
+            for (let i = 0; i < pointsControle.length - degre; i++) {
+                x += await deBoor(pointsControle, ordre, degre, pointsControle[i].x);
+                y += await deBoor(pointsControle, ordre, degre, pointsControle[i].y);
             }
-
             points.push(new THREE.Vector3(x, y, 0))
         }
+    }
 
     return points;
 }
 
+async function deBoor(pointsControle, ordre, degre, pos) {
+    let d = [], alpha;
 
-// permet de calculer un coefficient binomial
-function binomial(n, k) {
-    if ((typeof n !== 'number') || (typeof k !== 'number'))
-        return false;
-    let coeff = 1;
-    for (let x = n - k + 1; x <= n; x++) coeff *= x;
-    for (let x = 1; x <= k; x++) coeff /= x;
-    return coeff;
+    for (let i = 0; i <= degre; i++) {
+        d.push(pointsControle[i + ordre - degre]);
+    }
+
+    for (let r = 1; r <= degre; r++) {
+        for (let j = degre; j >= r - 1; j--) {
+            alpha = (pos - vecteurNoeud[j + ordre - degre]) / (vecteurNoeud[j + 1 + ordre - r] - vecteurNoeud[j + ordre - degre]);
+            d[j] = (1 - alpha) * d[j - 1] + alpha * d[j];
+        }
+    }
+
+    return d[degre];
 }
 
+async function addPointsBSpline(pointsControle) {
+    const points = [];
+
+    // let x, y, degre = pointsControle.length - 1;
+    let x, y, degre = 2;
+
+    let precision = 0.1;
+    if (pointsControle.length !== 0) {
+        // for (let t = 0; t < 1; t += precision) {
+        for (let t of vecteurNoeud) {
+            let t = 0;
+            x = 0;
+            y = 0;
+            for (let i = 0; i < pointsControle.length - degre; i++) {
+                // calcule la coordonnée de ce point en fonction de la fonction bSpline
+                x += pointsControle[i].x * await bSplineRecur(degre, i, t);
+                y += pointsControle[i].y * await bSplineRecur(degre, i, t);
+            }
+            points.push(new THREE.Vector3(x, y, 0))
+        }
+
+        return points;
+    }
+}
+
+// test autre implémentation s(t)
+async function s(t) {
+    let x = 0, y = 0, degre = 1;
+    for (let i = 0; i < vecteurNoeud.length; i++) {
+        x += tableauPoint[i].x * await bSplineRecur(degre, i, t);
+        y += tableauPoint[i].y * await bSplineRecur(degre, i, t);
+    }
+    console.log(x, y);
+}
+vecteurNoeud = [0, 1, 2, 3];
+tableauPoint.push(new THREE.Vector3(0, 0));
+tableauPoint.push(new THREE.Vector3(1, 1));
+tableauPoint.push(new THREE.Vector3(2, 3));
+tableauPoint.push(new THREE.Vector3(3, 0));
+s(0).then();
+
+// fonction récursive de bSpline
+async function bSplineRecur(m, i, t) {
+    if (m === 0) {
+        if (vecteurNoeud[i] <= t && t < vecteurNoeud[i + 1]) {
+            return 1;
+        } else {
+            return 0;
+        }
+    } else {
+        if (
+            // au lieu d'effectuer la vérification du cours qui causent de nombreux problèmes
+            // (liés au dépassement du tableau vecteur noeud)
+            // on effectue un test sur le dépassement de vecteur noeud
+            // !(0 <= m && m <= vecteurNoeud.length - 1) ||
+            // !(0 <= i && i <= vecteurNoeud.length - m - 1)
+            vecteurNoeud[i + m + 1] === undefined
+        ) {
+            return 0;
+        } else {
+            // fonction du cours page 82
+            return ((t - vecteurNoeud[i]) / (vecteurNoeud[i + m] - vecteurNoeud[i])) * await bSplineRecur(m - 1, i, t) +
+                ((vecteurNoeud[i + m + 1] - t) / (vecteurNoeud[i + m + 1] - vecteurNoeud[i + 1])) * await bSplineRecur(m - 1, i + 1, t)
+        }
+    }
+}
 
 // permet de dézoomer automatiquement
 function autoZoom() {
@@ -138,7 +222,6 @@ function autoZoom() {
         }
     }
 }
-
 
 
 // gère le click sur l'autozoom
@@ -240,30 +323,23 @@ function bonus() {
     let form = document.querySelector('form');
 
     switch (form.bonus.value) {
+        // courbe de test avec vecteur noeud [0, 1, 2, 3]
         case 'courbe1':
             tableauPoint = [
                 {x: 0, y: 0},
-                {x: 0, y: 1},
                 {x: 1, y: 1},
-                {x: 1, y: 0}
+                {x: 2, y: 1},
+                {x: 3, y: 0}
             ];
             break;
 
+        // courbe utilisé pour Béziers pour comparer le résultat
         case 'courbe2':
             tableauPoint = [
                 {x: 0, y: 0},
                 {x: 1, y: 0},
                 {x: 0, y: 1},
                 {x: 1, y: 1}
-            ];
-            break;
-
-        case 'courbe3':
-            tableauPoint = [
-                {x: 0, y: 0},
-                {x: 1, y: 1},
-                {x: 0, y: 1},
-                {x: 1, y: 0}
             ];
             break;
 
