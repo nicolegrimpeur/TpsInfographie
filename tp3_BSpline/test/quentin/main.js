@@ -71,7 +71,7 @@ function main() {
     renderer.render(scene, camera);
 
 
-} points de la courbe de Bézier
+} // points de la courbe de Bézier
 function addPointsBezier(pointsControle) {
     const points = [];
 
