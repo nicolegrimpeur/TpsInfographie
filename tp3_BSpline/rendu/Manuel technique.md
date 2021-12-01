@@ -25,11 +25,11 @@
       - la courbe de Béziers
     - abSort : retourne les coordonnées x des points ajoutés trié dans l'ordre croissant (permet de récupérer le vecteur de noeud)
     - addPointDeBoor : initialise la liste de points de la courbe de Béziers à partir du tableau de points de contrôle 
-    avec la méthode de l'algorithme de De Boor
-    - deBoor : retourne N
+    avec la méthode de l'algorithme de De Boor (non fonctionnelle)
+    - deBoor : retourne N (non fonctionnelle)
     - addPointsBSpline : initialise la liste de points de la courbe de Béziers à partir du tableau de points de contrôle
-      avec la fonction bSpline
-    - s : autre implémentation de addPointsBSpline
+      avec la fonction bSpline (non fonctionnelle)
+    - s : autre implémentation de addPointsBSpline (non fonctionnelle)
     - bSplineRecur : retourne N
     - autoZoom : modifie le zoom de la figure pour se fixer sur la zone à afficher
     - clickAutoZoom : gère le click sur le bouton autoZoom et active / désactive l'input permettant de modifier manuellement le zoom
