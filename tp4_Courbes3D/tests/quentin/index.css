@@ -1,0 +1,64 @@
+body {
+    margin: 0;
+    /* cache la barre pour descendre la page */
+    overflow: hidden;
+    font-family: serif;
+}
+
+/* taille des éléments html */
+#submit{
+    width: 5vw;
+    margin-left: 20vw;
+}
+
+select {
+    width: 5vw;
+}
+
+form {
+    height: 100vh;
+    position: absolute;
+    width:30vw;
+    line-height:10px;
+    z-index: 2;
+    padding-left: 5px;
+}
+
+canvas{
+    position: absolute;
+    z-index: 1;
+    /*margin-top:-15vh;*/
+    margin-left: 30vw;
+}
+
+.caseDonnee{
+    width: 2.5vw;
+    height: 2.5vw;
+    text-align: center;
+    box-sizing: border-box;
+    border: 3px solid #ccc;
+    border-radius: 6px;
+    -webkit-transition: 0.5s;
+    transition: 0.5s;
+    outline: none;
+}
+
+#casePrecis{
+    width: 5vw;
+}
+
+.caseDonnee:focus {
+    border: 3px solid #303030;
+}
+
+.DivVal{
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+/* classe pour le fond */
+.masthead {
+    height: 100vh;
+    background: linear-gradient(to bottom, rgba(22, 22, 22, 0.3) 0%, rgba(22, 22, 22, 0.7) 75%, #161616 100%), url(./background.jpg);
+    background-size: cover;
+}
