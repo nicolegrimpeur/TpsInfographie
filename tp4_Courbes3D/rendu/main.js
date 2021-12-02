@@ -73,20 +73,22 @@ function main() {
 function addPointsBezier(pointsControle) {
     const points = [];
 
-    let x, y, degre = pointsControle.length - 1;
+    let x, y, z, degre = pointsControle.length - 1;
 
     let precision = 0.001;
     if (pointsControle.length !== 0)
         for (let t = 0; t < 1; t += precision) {
             x = 0;
             y = 0;
+            z = 0;
             for (let i = 0; i < pointsControle.length; i++) {
                 // calcule la coordonnée de ce point en fonction de la formule du polynom de Berstein
                 x += pointsControle[i].x * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
                 y += pointsControle[i].y * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
+                z += pointsControle[i].z * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
             }
 
-            points.push(new THREE.Vector3(x, y, 0))
+            points.push(new THREE.Vector3(x, y, z))
         }
 
     return points;
@@ -159,9 +161,9 @@ function ajout() {
 
     if (form.xPointAjout.value === "" || form.yPointAjout.value === "") {
     } else if (form.pointFigure.value === "new") {
-        tableauPoint.push(new THREE.Vector3(parseInt(form.xPointAjout.value), parseInt(form.yPointAjout.value), 0));
+        tableauPoint.push(new THREE.Vector3(parseInt(form.xPointAjout.value), parseInt(form.yPointAjout.value), parseInt(form.zPointAjout.value)));
     } else {
-        tableauPoint[form.pointFigure.value - 1] = new THREE.Vector3(parseInt(form.xPointAjout.value), parseInt(form.yPointAjout.value), 0)
+        tableauPoint[form.pointFigure.value - 1] = new THREE.Vector3(parseInt(form.xPointAjout.value), parseInt(form.yPointAjout.value), parseInt(form.zPointAjout.value))
     }
 
     allPointSelect();
@@ -198,7 +200,7 @@ function allPointSelect() {
         div.appendChild(option);
         option.setAttribute('value', String(index + 1));
         option.textContent =
-            'Point ' + (index + 1) + ' (' + point.x + ', ' + point.y + ')';
+            'Point ' + (index + 1) + ' (' + point.x + ', ' + point.y + ', ' + point.z + ')';
     }
 
     afficherPoint();
@@ -213,10 +215,12 @@ function afficherPoint() {
     if (form.pointFigure.value !== "new") {
         form.xPointAjout.value = tableauPoint[form.pointFigure.value - 1].x;
         form.yPointAjout.value = tableauPoint[form.pointFigure.value - 1].y;
+        form.zPointAjout.value = tableauPoint[form.pointFigure.value - 1].z;
         boutonSuppr.removeAttribute('disabled');
     } else {
         form.xPointAjout.value = '';
         form.yPointAjout.value = '';
+        form.zPointAjout.value = '';
         boutonSuppr.setAttribute('disabled', '');
     }
 
@@ -227,11 +231,11 @@ function afficherPoint() {
 // modifie le texte du bouton ajouter
 function changeAjouter() {
     let form = document.querySelector('form');
-    let btnAjouter = document.getElementById('ajoutPoint');
+    let btnAjoute = document.getElementById('ajoutPoint');
 
-    if (form.xPointAjout.value !== "" || form.yPointAjout.value !== "")
-        btnAjouter.textContent = 'Modifier';
-    else btnAjouter.textContent = 'Ajouter';
+    if (form.xPointAjout.value !== "" || form.yPointAjout.value !== "" || form.zPointAjout.value !== "")
+        btnAjoute.textContent = 'Modifier';
+    else btnAjoute.textContent = 'Ajouter';
 }
 
 
@@ -242,28 +246,28 @@ function bonus() {
     switch (form.bonus.value) {
         case 'courbe1':
             tableauPoint = [
-                {x: 0, y: 0},
-                {x: 0, y: 1},
-                {x: 1, y: 1},
-                {x: 1, y: 0}
+                {x: 0, y: 0, z: 0},
+                {x: 0, y: 1, z: 0},
+                {x: 1, y: 1, z: 0},
+                {x: 1, y: 0, z: 0}
             ];
             break;
 
         case 'courbe2':
             tableauPoint = [
-                {x: 0, y: 0},
-                {x: 1, y: 0},
-                {x: 0, y: 1},
-                {x: 1, y: 1}
+                {x: 0, y: 0, z: 0},
+                {x: 1, y: 0, z: 0},
+                {x: 0, y: 1, z: 0},
+                {x: 1, y: 1, z: 0}
             ];
             break;
 
         case 'courbe3':
             tableauPoint = [
-                {x: 0, y: 0},
-                {x: 1, y: 1},
-                {x: 0, y: 1},
-                {x: 1, y: 0}
+                {x: 0, y: 0, z: 0},
+                {x: 1, y: 1, z: 0},
+                {x: 0, y: 1, z: 0},
+                {x: 1, y: 0, z: 0}
             ];
             break;
 
