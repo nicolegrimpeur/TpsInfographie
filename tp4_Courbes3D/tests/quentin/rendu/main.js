@@ -44,31 +44,22 @@ function main() {
         color: 0xb1b1b1
     });
 
-    const materialOrigin = new THREE.LineBasicMaterial({
-        color: 0xb1b1b1,
-        linewidth: 1
-    });
-
     // on ajoute tous les points
     const pointsBezier = addPointsBezier(tableauPoint);
-    const tabOrigin = origin();
 
     // créé un buffer de points à partir du tableau de points
     const geometryControle = new THREE.BufferGeometry().setFromPoints(tableauPoint);
     const geometryBezier = new THREE.BufferGeometry().setFromPoints(pointsBezier);
-    const geometryOrigin = new THREE.BufferGeometry().setFromPoints(tabOrigin);
 
     // enregistre tous les points
     const formeControle = new THREE.Points(geometryControle, material);
     const formeLigne = new THREE.Line(geometryControle, materialLigne);
     const formeBezier = new THREE.Points(geometryBezier, materialBezier);
-    const formeOrigin = new THREE.Line(geometryOrigin,materialOrigin);
 
     // affiche tous les points
     scene.add(formeControle);
     scene.add(formeLigne);
     scene.add(formeBezier);
-    scene.add(formeOrigin);
 
     // si l'autozoom est coché
     if (document.getElementById("zoom").checked === true)
@@ -137,12 +128,12 @@ function autoZoom() {
         let Ymoy = (Ymax - Ymin) / 2;
 
         if (Xmoy > Ymoy) {
-            let dezoom = (Xmax - Xmin) * 1.25;
+            let dezoom = Xmax - Xmin;
             camera.position.set(Xmin + Xmoy, Ymin + Ymoy, dezoom);
             camera.lookAt(Xmin + Xmoy, Ymin + Ymoy, dezoom);
 
         } else {
-            let dezoom = (Ymax - Ymin) * 2;
+            let dezoom = (Ymax - Ymin) * 1.5;
             camera.position.set(Xmin + Xmoy, Ymin + Ymoy, dezoom);
             camera.lookAt(Xmin + Xmoy, Ymin + Ymoy, dezoom);
 
@@ -283,19 +274,8 @@ function bonus() {
         default:
             break;
     }
-}
-
-function origin() {
-    let tab = [];
-    tab.push(new THREE.Vector3(1,0,0));
-    tab.push(new THREE.Vector3(0,0,0));
-    tab.push(new THREE.Vector3(0,1,0));
-    tab.push(new THREE.Vector3(0,0,0));
-    tab.push(new THREE.Vector3(0,0,1));
-    return tab;
-}
 
     allPointSelect();
 
     main();
-
+}
