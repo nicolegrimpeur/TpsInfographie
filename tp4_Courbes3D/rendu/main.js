@@ -21,7 +21,6 @@ function main() {
     document.getElementsByClassName('masthead')[0].appendChild(renderer.domElement);
 
     // on créé la caméra de la taille de la fenêtre
-
     camera.position.set(0, 0, 0);
     camera.lookAt(0, 0, 0);
 
@@ -62,13 +61,17 @@ function main() {
     const formeControle = new THREE.Points(geometryControle, material);
     const formeLigne = new THREE.Line(geometryControle, materialLigne);
     const formeBezier = new THREE.Points(geometryBezier, materialBezier);
-    const formeOrigin = new THREE.Line(geometryOrigin,materialOrigin);
+    const formeOrigin = new THREE.Line(geometryOrigin, materialOrigin);
 
     // affiche tous les points
     scene.add(formeControle);
     scene.add(formeLigne);
     scene.add(formeBezier);
-    scene.add(formeOrigin);
+    // scene.add(formeOrigin);
+
+    //affichage des axes
+    const axesHelper = new THREE.AxesHelper(100);
+    scene.add(axesHelper);
 
     // si l'autozoom est coché
     if (document.getElementById("zoom").checked === true)
@@ -82,22 +85,24 @@ function main() {
 function addPointsBezier(pointsControle) {
     const points = [];
 
-    let x, y, z, degre = pointsControle.length - 1;
+    let x, y, z, compteur = 0, degre = pointsControle.length - 1;
 
     let precision = 0.001;
     if (pointsControle.length !== 0)
-        for (let t = 0; t < 1; t += precision) {
-            x = 0;
-            y = 0;
-            z = 0;
-            for (let i = 0; i < pointsControle.length; i++) {
-                // calcule la coordonnée de ce point en fonction de la formule du polynom de Berstein
-                x += pointsControle[i].x * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
-                y += pointsControle[i].y * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
-                z += pointsControle[i].z * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
-            }
+        for (let compteur = 0; compteur < pointsControle.length; compteur += 3) {
+            for (let t = 0; t < 1; t += precision) {
+                x = 0;
+                y = 0;
+                z = 0;
+                for (let i = compteur; i < compteur + 3; i++) {
+                    // calcule la coordonnée de ce point en fonction de la formule du polynom de Berstein
+                    x += pointsControle[i].x * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
+                    y += pointsControle[i].y * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
+                    z += pointsControle[i].z * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
+                }
 
-            points.push(new THREE.Vector3(x, y, z))
+                points.push(new THREE.Vector3(x, y, z));
+            }
         }
 
     return points;
@@ -122,6 +127,7 @@ function autoZoom() {
         camera.lookAt(tableauPoint[0].x, tableauPoint[0].y, 1);
     } else {
         let Xmin = 999., Xmax = -999., Ymin = 999., Ymax = -999.;
+
         for (let i = 0; i < tableauPoint.length; i++) {
             if (Xmin > tableauPoint[i].x)
                 Xmin = tableauPoint[i].x;
@@ -149,7 +155,6 @@ function autoZoom() {
         }
     }
 }
-
 
 
 // gère le click sur l'autozoom
@@ -294,19 +299,18 @@ function bonus() {
         default:
             break;
     }
-}
-
-function origin() {
-    let tab = [];
-    tab.push(new THREE.Vector3(1,0,0));
-    tab.push(new THREE.Vector3(0,0,0));
-    tab.push(new THREE.Vector3(0,1,0));
-    tab.push(new THREE.Vector3(0,0,0));
-    tab.push(new THREE.Vector3(0,0,1));
-    return tab;
-}
 
     allPointSelect();
 
     main();
+}
 
+function origin() {
+    let tab = [];
+    tab.push(new THREE.Vector3(1, 0, 0));
+    tab.push(new THREE.Vector3(0, 0, 0));
+    tab.push(new THREE.Vector3(0, 1, 0));
+    tab.push(new THREE.Vector3(0, 0, 0));
+    tab.push(new THREE.Vector3(0, 0, 1));
+    return tab;
+}
