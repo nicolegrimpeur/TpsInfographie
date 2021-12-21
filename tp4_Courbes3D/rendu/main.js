@@ -49,7 +49,18 @@ function main() {
     });
 
     // on ajoute tous les points
-    const pointsBezier = addPointsBezier(tableauPoint);
+    let tmpPointsBezier = [], tmpPointsControles, limite;
+    for (let i = 0; i < tableauPoint.length; i += 2) {
+        limite = 3;
+        if (tableauPoint[i + 2] === undefined) limite = 2;
+        if (tableauPoint[i + 1] === undefined) limite = 1;
+        console.log(limite);
+        tmpPointsControles = tableauPoint.slice().splice(i, limite);
+        console.log(tmpPointsControles);
+        tmpPointsBezier = tmpPointsBezier.concat(addPointsBezier(tmpPointsControles));
+    }
+    const pointsBezier = tmpPointsBezier;
+
     const tabOrigin = origin();
 
     // créé un buffer de points à partir du tableau de points
@@ -64,8 +75,8 @@ function main() {
     const formeOrigin = new THREE.Line(geometryOrigin, materialOrigin);
 
     // affiche tous les points
-    scene.add(formeControle);
-    scene.add(formeLigne);
+    // scene.add(formeControle);
+    // scene.add(formeLigne);
     scene.add(formeBezier);
     // scene.add(formeOrigin);
 
@@ -85,24 +96,28 @@ function main() {
 function addPointsBezier(pointsControle) {
     const points = [];
 
-    let x, y, z, compteur = 0, degre = pointsControle.length - 1;
+    let x, y, z, compteur = 0, degre = pointsControle.length - 1, limite;
 
     let precision = 0.001;
     if (pointsControle.length !== 0)
-        for (let compteur = 0; compteur < pointsControle.length; compteur += 3) {
-            for (let t = 0; t < 1; t += precision) {
-                x = 0;
-                y = 0;
-                z = 0;
-                for (let i = compteur; i < compteur + 3; i++) {
-                    // calcule la coordonnée de ce point en fonction de la formule du polynom de Berstein
-                    x += pointsControle[i].x * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
-                    y += pointsControle[i].y * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
-                    z += pointsControle[i].z * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
-                }
+        // for (let compteur = 0; compteur < pointsControle.length; compteur += 1) {
+        for (let t = 0; t < 1; t += precision) {
+            x = 0;
+            y = 0;
+            z = 0;
 
-                points.push(new THREE.Vector3(x, y, z));
+            // limite = 3;
+            // if (pointsControle[compteur + 2] === undefined) limite = 2;
+            // if (pointsControle[compteur + 1] === undefined) limite = 1;
+
+            // for (let i = compteur; i < compteur + limite; i++) {
+            for (let i = 0; i < pointsControle.length; i++) {
+                // calcule la coordonnée de ce point en fonction de la formule du polynom de Berstein
+                x += pointsControle[i].x * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
+                y += pointsControle[i].y * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
+                z += pointsControle[i].z * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
             }
+            points.push(new THREE.Vector3(x, y, z));
         }
 
     return points;
@@ -267,6 +282,7 @@ function bonus() {
                 {x: 5, y: -0.75, z: 0},
                 {x: 3.5, y: -2, z: 0},
                 {x: 2, y: -1, z: 0},
+                {x: 0, y: -1, z: 0},
                 {x: -2, y: -1, z: 0},
                 {x: -3, y: -2, z: 0},
                 {x: -4.5, y: -1.5, z: 0},
@@ -274,6 +290,7 @@ function bonus() {
                 {x: -5, y: 1, z: 0},
                 {x: -3.5, y: 2, z: 0},
                 {x: -2, y: 1, z: 0},
+                {x: 0, y: 1, z: 0},
                 {x: 2, y: 1, z: 0}
             ];
             break;
