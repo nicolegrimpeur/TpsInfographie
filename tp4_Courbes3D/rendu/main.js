@@ -1,3 +1,5 @@
+// const THREE = require(['https://cdn.skypack.dev/pin/three@v0.135.0-pjGUcRG9Xt70OdXl97VF/mode=imports/optimized/three.js']);
+
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth * 0.6 / window.innerHeight, 1, 500);
 let tableauPoint = []; // tableau contenant les points de controle
 
@@ -54,9 +56,7 @@ function main() {
         limite = 3;
         if (tableauPoint[i + 2] === undefined) limite = 2;
         if (tableauPoint[i + 1] === undefined) limite = 1;
-        console.log(limite);
         tmpPointsControles = tableauPoint.slice().splice(i, limite);
-        console.log(tmpPointsControles);
         tmpPointsBezier = tmpPointsBezier.concat(addPointsBezier(tmpPointsControles));
     }
     const pointsBezier = tmpPointsBezier;
@@ -89,6 +89,9 @@ function main() {
         autoZoom(tableauPoint);
 
     renderer.render(scene, camera);
+
+    const controls = new THREE.OrbitControls( camera, renderer.domElement );
+    console.log(controls);
 }
 
 
