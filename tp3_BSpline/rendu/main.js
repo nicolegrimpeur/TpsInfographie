@@ -48,12 +48,24 @@ function main() {
 
     vecteurNoeud = abSort(tableauPoint);
 
+    let degre = parseInt(form.degre.value);
+    // let degre = 2;
+
     // on ajoute tous les points
-    // const pointsBezier = addPointsBSpline(tableauPoint);
-    const pointsBezier = addPointsDeBoor(tableauPoint);
+    let tmpPointsBeziers = [];
+    let tmpPoint;
+    for (let t = 0; t < 1; t += 0.001) {
+        tmpPoint = deBoorReccur(t, degre, tableauPoint);
+        tmpPointsBeziers.push(new THREE.Vector3(tmpPoint[0], tmpPoint[1], 0));
+    }
+
+    const pointsBezier = tmpPointsBeziers;
+    console.log(pointsBezier);
 
     // créé un buffer de points à partir du tableau de points
-    const geometryControle = new THREE.BufferGeometry().setFromPoints(tableauPoint);
+    let vecteurControle = [];
+    for (let point of tableauPoint) vecteurControle.push(new THREE.Vector3(point[0], point[1], 0))
+    const geometryControle = new THREE.BufferGeometry().setFromPoints(vecteurControle);
     const geometryBezier = new THREE.BufferGeometry().setFromPoints(pointsBezier);
 
     // enregistre tous les points
@@ -68,7 +80,7 @@ function main() {
 
     // si l'autozoom est coché
     if (document.getElementById("zoom").checked === true)
-        autoZoom(tableauPoint);
+        autoZoom(vecteurControle);
 
     renderer.render(scene, camera);
 }
@@ -81,6 +93,142 @@ function abSort(pointsControle) {
     }
     tabAbscisse.sort();
     return tabAbscisse;
+}
+
+function recupPoints(degre) {
+    let tmpPointsBezier = [], tmpPointsControles, limite;
+    for (let i = 0; i < tableauPoint.length; i += 1) {
+        limite = degre + 1;
+        for (let j = degre; j > 0; j--)
+            if (tableauPoint[i + j] === undefined) limite = j;
+        tmpPointsControles = tableauPoint.slice().splice(i, limite);
+        tmpPointsBezier = tmpPointsBezier.concat(addPointsBezier(tmpPointsControles));
+    }
+    // for (let i = tableauPoint.length; i > 0; i -= 1) {
+    //     limite = degre + 1;
+    //     for (let j = degre; j > 0; j--)
+    //         if (tableauPoint[i + j] === undefined) limite = j;
+    //     tmpPointsControles = tableauPoint.slice().splice(i, -limite);
+    //     tmpPointsBezier = tmpPointsBezier.concat(addPointsBezier(tmpPointsControles));
+    //     console.log(i);
+    // }
+
+    let curve = [];
+
+
+    return tmpPointsBezier;
+}
+
+// retourne le tableau avec les points de la courbe de Bézier
+function addPointsBezier(pointsControle) {
+    const points = [];
+
+    let x, y, Bi, degre = pointsControle.length - 1;
+
+    let precision = 0.001;
+    if (pointsControle.length !== 0)
+        for (let t = 0; t < 1; t += precision) {
+            x = 0; y = 0;
+
+            for (let i = 0; i < pointsControle.length; i++) {
+                // calcule la coordonnée de ce point en fonction de la formule du polynom de Berstein
+                Bi = binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
+                x += pointsControle[i].x * Bi;
+                y += pointsControle[i].y * Bi;
+            }
+            points.push(new THREE.Vector3(x, y, 0));
+        }
+
+    return points;
+}
+
+// permet de calculer un coefficient binomial
+function binomial(n, k) {
+    if ((typeof n !== 'number') || (typeof k !== 'number'))
+        return false;
+    let coeff = 1;
+    for (let x = n - k + 1; x <= n; x++) coeff *= x;
+    for (let x = 1; x <= k; x++) coeff /= x;
+    return coeff;
+}
+
+function deBoorReccur(t, degree, points, knots, weights, result) {
+    if (points.length === 0) return [];
+    let i,j,s,l;              // function-scoped iteration variables
+    let n = points.length;    // points count
+    let d = points[0].length; // point dimensionality
+
+    if(degree < 1) throw new Error('degree must be at least 1 (linear)');
+    if(degree > (n-1)) throw new Error('degree must be less than or equal to point count - 1');
+
+    if(!weights) {
+        // build weight vector of length [n]
+        weights = [];
+        for(i=0; i<n; i++) {
+            weights[i] = 1;
+        }
+    }
+
+    if(!knots) {
+        // build knot vector of length [n + degree + 1]
+        knots = [];
+        for(i=0; i<n+degree+1; i++) {
+            knots[i] = i;
+        }
+    } else {
+        if(knots.length !== n+degree+1) throw new Error('bad knot vector length');
+    }
+
+    let domain = [
+        degree,
+        knots.length-1 - degree
+    ];
+
+    // remap t to the domain where the spline is defined
+    let low  = knots[domain[0]];
+    let high = knots[domain[1]];
+    t = t * (high - low) + low;
+
+    if(t < low || t > high) throw new Error('out of bounds');
+
+    // find s (the spline segment) for the [t] value provided
+    for(s=domain[0]; s<domain[1]; s++) {
+        if(t >= knots[s] && t <= knots[s+1]) {
+            break;
+        }
+    }
+
+    // convert points to homogeneous coordinates
+    let v = [];
+    for(i=0; i<n; i++) {
+        v[i] = [];
+        for(j=0; j<d; j++) {
+            v[i][j] = points[i][j] * weights[i];
+        }
+        v[i][d] = weights[i];
+    }
+
+    // l (level) goes from 1 to the curve degree + 1
+    let alpha;
+    for(l=1; l<=degree+1; l++) {
+        // build level l of the pyramid
+        for(i=s; i>s-degree-1+l; i--) {
+            alpha = (t - knots[i]) / (knots[i+degree+1-l] - knots[i]);
+
+            // interpolate each component
+            for(j=0; j<d+1; j++) {
+                v[i][j] = (1 - alpha) * v[i-1][j] + alpha * v[i][j];
+            }
+        }
+    }
+
+    // convert back to cartesian and return
+    result = result || [];
+    for(i=0; i<d; i++) {
+        result[i] = v[s][i] / v[s][d];
+    }
+
+    return result;
 }
 
 // début implémentation de la méthode de de boor
@@ -153,7 +301,7 @@ async function s(t) {
         x += tableauPoint[i].x * await bSplineRecur(degre, i, t);
         y += tableauPoint[i].y * await bSplineRecur(degre, i, t);
     }
-    console.log(x, y);
+    // console.log(x, y);
 }
 vecteurNoeud = [0, 1, 2, 3];
 tableauPoint.push(new THREE.Vector3(0, 0));
@@ -189,21 +337,21 @@ async function bSplineRecur(m, i, t) {
 }
 
 // permet de dézoomer automatiquement
-function autoZoom() {
-    if (tableauPoint.length === 1) {
-        camera.position.set(tableauPoint[0].x, tableauPoint[0].y, 1);
-        camera.lookAt(tableauPoint[0].x, tableauPoint[0].y, 1);
+function autoZoom(pointsControle) {
+    if (pointsControle.length === 1) {
+        camera.position.set(pointsControle[0].x, pointsControle[0].y, 1);
+        camera.lookAt(pointsControle[0].x, pointsControle[0].y, 1);
     } else {
         let Xmin = 999., Xmax = -999., Ymin = 999., Ymax = -999.;
-        for (let i = 0; i < tableauPoint.length; i++) {
-            if (Xmin > tableauPoint[i].x)
-                Xmin = tableauPoint[i].x;
-            if (Xmax < tableauPoint[i].x)
-                Xmax = tableauPoint[i].x;
-            if (Ymin > tableauPoint[i].y)
-                Ymin = tableauPoint[i].y;
-            if (Ymax < tableauPoint[i].y)
-                Ymax = tableauPoint[i].y;
+        for (let i = 0; i < pointsControle.length; i++) {
+            if (Xmin > pointsControle[i].x)
+                Xmin = pointsControle[i].x;
+            if (Xmax < pointsControle[i].x)
+                Xmax = pointsControle[i].x;
+            if (Ymin > pointsControle[i].y)
+                Ymin = pointsControle[i].y;
+            if (Ymax < pointsControle[i].y)
+                Ymax = pointsControle[i].y;
         }
 
         let Xmoy = (Xmax - Xmin) / 2;
@@ -218,7 +366,6 @@ function autoZoom() {
             let dezoom = (Ymax - Ymin) * 2;
             camera.position.set(Xmin + Xmoy, Ymin + Ymoy, dezoom);
             camera.lookAt(Xmin + Xmoy, Ymin + Ymoy, dezoom);
-
         }
     }
 }
@@ -336,16 +483,24 @@ function bonus() {
         // courbe utilisé pour Béziers pour comparer le résultat
         case 'courbe2':
             tableauPoint = [
-                {x: 0, y: 0},
-                {x: 1, y: 0},
-                {x: 0, y: 1},
-                {x: 1, y: 1}
+                [0, 0],
+                [1, 4],
+                [3, 5],
+                [4, 4],
+                [3, 1],
+                [6, 1],
+                [5, 5],
+                [6.5, 6],
+                [8, 5],
+                [7.5, 2]
             ];
             break;
 
         default:
             break;
     }
+
+    form.degre.value = tableauPoint.length - 1;
 
     allPointSelect();
 

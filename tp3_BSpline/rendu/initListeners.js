@@ -47,3 +47,12 @@ let checkAutoZoom = document.getElementById('zoom');
 checkAutoZoom.addEventListener('click', () => {
     clickAutoZoom();
 });
+
+
+// check autozoom
+let degre = document.getElementById('degre');
+
+// relance le main avec l'autozoom activé ou désactivé
+degre.addEventListener('change', () => {
+    main();
+});
