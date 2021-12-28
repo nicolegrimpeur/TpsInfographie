@@ -49,13 +49,9 @@ function main() {
     // récupère le degré à utiliser sur le formulaire
     let degre = parseInt(form.degre.value);
 
-    // TODO : permettre à l'utilisateur de rentrer le vecteur noeud
     // récupère le vecteur noeud sur le formulaire
-    vecteurNoeud = [];
-
-    // TODO : permettre à l'utilisateur de rentrer le poid de chaque point
+    
     // récupère le poid sur le formulaire
-    poids = [];
 
     // on ajoute tous les points
     const pointsBSpline = recupPoints(degre, vecteurNoeud, poids);
@@ -327,6 +323,15 @@ function changeAjouter() {
     if (form.xPointAjout.value !== "" || form.yPointAjout.value !== "")
         btnAjouter.textContent = 'Modifier';
     else btnAjouter.textContent = 'Ajouter';
+
+    let noeud = document.getElementById('noeud').value;
+    if(noeud!==0){
+        vecteurNoeud = [noeud];
+    }
+    let formPoids = document.getElementById('formPoids').value;
+    if(formPoids!==""){
+        poids = [formPoids];
+    }
 }
 
 

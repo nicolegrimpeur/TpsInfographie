@@ -38,11 +38,7 @@
                 ; y =
                 <input type="text" class="caseDonnee" name="yPointAjout" value="">
             </label>
-            &emsp;
-            <button id="ajoutPoint" type="button" class="btn btn-primary">Ajouter</button>
-
             <br><br>
-
             <!-- liste des points -->
             <label>
                 Liste de points :
@@ -57,7 +53,13 @@
         <div>
             <label>
                 Degré
-                <input type="text" class="caseDonnee" name="dezoom" value="2" id="degre">
+                <input type="text" class="caseDonnee" name="degre" value="2" id="degre">
+            <br>
+                Vecteur nœud
+                <input type="text" class="caseDonnee" name="noeud" value="0" id="noeud">
+            <br>
+                Poids
+                <input type="text" class="caseDonnee" name="poids" value="" id="formPoids">
             </label>
         </div>
 
@@ -73,6 +75,7 @@
 
 
         <div>
+            <button id="ajoutPoint" type="button" class="btn btn-primary">Ajouter</button>
             <button id="suppressionPoints" type="button" class="btn btn-primary">Supprimer tous les points</button>
         </div>
     </form>
@@ -82,7 +85,7 @@
 <script src="initListeners.js"></script>
 
 <script>
-    // initialise le canva
+    // initialise le canvas
     initCanva(form);
 </script>
 </body>
