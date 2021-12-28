@@ -1,8 +1,33 @@
-// on crée la caméra de la taille de la fenêtre
-const camera = new THREE.PerspectiveCamera(45, window.innerWidth * 0.6 / window.innerHeight, 1, 500);
 let tableauPoint = []; // tableau contenant les points de controle
 let vecteurNoeud = []; // tableau contenant le vecteur noeud
 let poids = [];        // tableau contenant les poids de chaque points (compris entre 0 et 1, si égale à 1, la courbe passera par ce point)
+
+
+///////// initialisation variable three js
+// on crée la caméra de la taille de la fenêtre
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth * 0.6 / window.innerHeight, 1, 500);
+
+// création de la zone d'affichage
+const renderer = new THREE.WebGLRenderer({antialias: true});
+renderer.setSize(window.innerWidth * 0.6, window.innerHeight);
+// on ajoute le canva
+document.getElementsByClassName('masthead')[0].appendChild(renderer.domElement);
+
+// création de la variable permettant la modification de la vision
+let cameraControls = new THREE.OrbitControls(camera, renderer.domElement);
+cameraControls.target = new THREE.Vector3(0,0,0);
+
+// création de la scène
+const scene = new THREE.Scene();
+
+// modification de la scène en fonction du déplacement sur la page
+cameraControls.addEventListener('change', function() {
+    renderer.render(scene, camera);
+});
+
+
+let formeControle, formeLigne, formeBSpline;
+
 
 // permet d'initialiser la zone de dessin / supprimer les points
 function initCanva() {
@@ -17,20 +42,15 @@ function initCanva() {
 function main() {
     let form = document.querySelector('form');
 
-    const renderer = new THREE.WebGLRenderer({antialias: true});
-    renderer.setSize(window.innerWidth * 0.6, window.innerHeight);
-
-    // permet de supprimer le canva s'il existe déjà pour l'actualiser
-    if (document.querySelector('canvas') !== null) document.querySelector('canvas').remove();
-    document.getElementsByClassName('masthead')[0].appendChild(renderer.domElement);
+    if (formeControle) scene.remove(formeControle);
+    if (formeLigne) scene.remove(formeLigne);
+    if (formeBSpline) scene.remove(formeBSpline);
 
     camera.position.set(0, 0, 0);
     camera.lookAt(0, 0, 0);
 
     // à faire, permettre à l'utilisateur de gérer le dézoom
     camera.position.z = form.dezoom.value;
-
-    const scene = new THREE.Scene();
 
     // couleur et taille de chaque point
     const material = new THREE.PointsMaterial({
@@ -74,9 +94,9 @@ function main() {
     const geometryBSpline = new THREE.BufferGeometry().setFromPoints(pointsBSpline);
 
     // enregistre tous les points
-    const formeControle = new THREE.Points(geometryControle, material);
-    const formeLigne = new THREE.Line(geometryControle, materialLigne);
-    const formeBSpline = new THREE.Points(geometryBSpline, materialBSpline);
+    formeControle = new THREE.Points(geometryControle, material);
+    formeLigne = new THREE.Line(geometryControle, materialLigne);
+    formeBSpline = new THREE.Points(geometryBSpline, materialBSpline);
 
     // affiche tous les points
     scene.add(formeControle);
@@ -222,16 +242,13 @@ function autoZoom(pointsControle) {
         let Xmoy = (Xmax - Xmin) / 2;
         let Ymoy = (Ymax - Ymin) / 2;
 
-        if (Xmoy > Ymoy) {
-            let dezoom = (Xmax - Xmin) * 1.25;
-            camera.position.set(Xmin + Xmoy, Ymin + Ymoy, dezoom);
-            camera.lookAt(Xmin + Xmoy, Ymin + Ymoy, dezoom);
+        let dezoom;
+        if (Xmoy > Ymoy) dezoom = (Xmax - Xmin) * 1.25;
+        else dezoom = (Ymax - Ymin) * 2;
 
-        } else {
-            let dezoom = (Ymax - Ymin) * 2;
-            camera.position.set(Xmin + Xmoy, Ymin + Ymoy, dezoom);
-            camera.lookAt(Xmin + Xmoy, Ymin + Ymoy, dezoom);
-        }
+        camera.position.set(Xmin + Xmoy, Ymin + Ymoy, dezoom);
+        camera.lookAt(Xmin + Xmoy, Ymin + Ymoy, dezoom);
+        cameraControls.target = new THREE.Vector3(Xmin + Xmoy,Ymin + Ymoy, 0);
     }
 }
 
