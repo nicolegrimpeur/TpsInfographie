@@ -9,8 +9,10 @@ npm i three-js
 ```
 
 ## import with... import
+
 ```javascript
-import THREELib from "three-js";
+import THREELib from "./index";
+
 var THREE = THREELib(); // return THREE JS
 // or
 var THREE = THREELib(["EffectComposer", ...]); // return THREE JS extended by its addons
