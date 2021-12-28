@@ -18,6 +18,7 @@ function main() {
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth * 0.6, window.innerHeight);
 
+
     // permet de supprimer le canva s'il existe déjà pour l'actualiser
     if (document.querySelector('canvas') !== null) document.querySelector('canvas').remove();
     document.getElementsByClassName('masthead')[0].appendChild(renderer.domElement);
@@ -41,14 +42,9 @@ function main() {
         size: 0.01
     });
 
-    const materialLigne = new THREE.LineBasicMaterial({
+    /*const materialLigne = new THREE.LineBasicMaterial({
         color: 0xb1b1b1
-    });
-
-    const materialOrigin = new THREE.LineBasicMaterial({
-        color: 0xb1b1b1,
-        linewidth: 1
-    });
+    });*/
 
     // on ajoute tous les points
     let tmpPointsBezier = [], tmpPointsControles, limite;
@@ -61,24 +57,19 @@ function main() {
     }
     const pointsBezier = tmpPointsBezier;
 
-    const tabOrigin = origin();
-
     // créé un buffer de points à partir du tableau de points
     const geometryControle = new THREE.BufferGeometry().setFromPoints(tableauPoint);
     const geometryBezier = new THREE.BufferGeometry().setFromPoints(pointsBezier);
-    const geometryOrigin = new THREE.BufferGeometry().setFromPoints(tabOrigin);
 
     // enregistre tous les points
     const formeControle = new THREE.Points(geometryControle, material);
-    const formeLigne = new THREE.Line(geometryControle, materialLigne);
+    //const formeLigne = new THREE.Line(geometryControle, materialLigne);
     const formeBezier = new THREE.Points(geometryBezier, materialBezier);
-    const formeOrigin = new THREE.Line(geometryOrigin, materialOrigin);
 
     // affiche tous les points
     // scene.add(formeControle);
     // scene.add(formeLigne);
     scene.add(formeBezier);
-    // scene.add(formeOrigin);
 
     //affichage des axes
     const axesHelper = new THREE.AxesHelper(100);
@@ -89,9 +80,8 @@ function main() {
         autoZoom(tableauPoint);
 
     renderer.render(scene, camera);
+    //scene.add(ligne);
 
-    const controls = new THREE.OrbitControls( camera, renderer.domElement );
-    console.log(controls);
 }
 
 
@@ -323,14 +313,4 @@ function bonus() {
     allPointSelect();
 
     main();
-}
-
-function origin() {
-    let tab = [];
-    tab.push(new THREE.Vector3(1, 0, 0));
-    tab.push(new THREE.Vector3(0, 0, 0));
-    tab.push(new THREE.Vector3(0, 1, 0));
-    tab.push(new THREE.Vector3(0, 0, 0));
-    tab.push(new THREE.Vector3(0, 0, 1));
-    return tab;
 }
