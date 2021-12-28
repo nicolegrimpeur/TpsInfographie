@@ -1,11 +1,15 @@
 // const THREE = require(['https://cdn.skypack.dev/pin/three@v0.135.0-pjGUcRG9Xt70OdXl97VF/mode=imports/optimized/three.js']);
 
-const camera = new THREE.PerspectiveCamera(45, window.innerWidth * 0.6 / window.innerHeight, 1, 500);
+const THREE = require(['./three-js/three']);
+// const NURBSSurface = require(['./libs/NURBSSurface.js']);
+
+
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth * 0.6 / window.innerHeight, 0.1, 1000);
+// const cameraControls = new THREE.OrbitControls(camera);
 let tableauPoint = []; // tableau contenant les points de controle
 
 // permet d'initialiser la zone de dessin / supprimer les points
 function initCanva() {
-    tableauPoint = [];
     allPointSelect();
     main();
 }
@@ -17,7 +21,9 @@ function main() {
 
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth * 0.6, window.innerHeight);
+    renderer.setClearColor(0xEEEEEE);
 
+    let axesHelper = new THREE.AxesHelper(20);
 
     // permet de supprimer le canva s'il existe déjà pour l'actualiser
     if (document.querySelector('canvas') !== null) document.querySelector('canvas').remove();
@@ -27,61 +33,157 @@ function main() {
     camera.position.set(0, 0, 0);
     camera.lookAt(0, 0, 0);
 
+    const cameraControls = new THREE.OrbitControls(camera, renderer.domElement);
+    // camera.position.x = -60;
+    // camera.position.y = 50;
+    // camera.position.z = -40;
+    // camera.lookAt(new THREE.Vector3(20,0,15));
+    // camera.updateProjectionMatrix();
+    // cameraControls.target = new THREE.Vector3(20,0,15);
+
     // à faire, permettre à l'utilisateur de gérer le dézoom
-    camera.position.z = form.dezoom.value;
+    // camera.position.z = form.dezoom.value;
 
     const scene = new THREE.Scene();
 
     // couleur et taille de chaque point
-    const material = new THREE.PointsMaterial({
-        color: 0xb1b1b1,
-        size: 0.05
-    });
-    const materialBezier = new THREE.PointsMaterial({
-        color: 0xb1b1b1,
-        size: 0.01
-    });
+    // const material = new THREE.PointsMaterial({
+    //     color: 0xb1b1b1,
+    //     size: 0.05
+    // });
+    // const materialBezier = new THREE.PointsMaterial({
+    //     color: 0xb1b1b1,
+    //     size: 0.01
+    // });
+    //
+    // const materialLigne = new THREE.LineBasicMaterial({
+    //     color: 0xb1b1b1
+    // });
+    //
+    // const materialOrigin = new THREE.LineBasicMaterial({
+    //     color: 0xb1b1b1,
+    //     linewidth: 1
+    // });
 
-    /*const materialLigne = new THREE.LineBasicMaterial({
-        color: 0xb1b1b1
-    });*/
+    // const texture = new THREE.TextureLoader().load('assets/texture.jpg');
+
+    // immediately use the texture for material creation
+    // const materialWithTexture = new THREE.MeshBasicMaterial({color: 0xFF0000});
 
     // on ajoute tous les points
-    let tmpPointsBezier = [], tmpPointsControles, limite;
-    for (let i = 0; i < tableauPoint.length; i += 2) {
-        limite = 3;
-        if (tableauPoint[i + 2] === undefined) limite = 2;
-        if (tableauPoint[i + 1] === undefined) limite = 1;
-        tmpPointsControles = tableauPoint.slice().splice(i, limite);
-        tmpPointsBezier = tmpPointsBezier.concat(addPointsBezier(tmpPointsControles));
-    }
-    const pointsBezier = tmpPointsBezier;
+    // let tmpPointsBezier = [], tmpPointsControles, limite;
+    // for (let i = 0; i < tableauPoint.length; i += 2) {
+    //     limite = 3;
+    //     if (tableauPoint[i + 2] === undefined) limite = 2;
+    //     if (tableauPoint[i + 1] === undefined) limite = 1;
+    //     tmpPointsControles = tableauPoint.slice().splice(i, limite);
+    //     tmpPointsBezier = tmpPointsBezier.concat(addPointsBezier(tmpPointsControles));
+    // }
+    // const pointsBezier = tmpPointsBezier;
+    //
+    // const surfaceBeziers = [];
+    // console.log(pointsBezier.length);
+
+    // for (let i = 0; i < pointsBezier.length; i++) {
+    //     for (let j = 0; j < pointsBezier.length; j++) {
+    //         if (i !== j) {
+    //             surfaceBeziers.push(pointsBezier[j]);
+    //         }
+    //     }
+    // }
+    const tabOrigin = origin();
 
     // créé un buffer de points à partir du tableau de points
-    const geometryControle = new THREE.BufferGeometry().setFromPoints(tableauPoint);
-    const geometryBezier = new THREE.BufferGeometry().setFromPoints(pointsBezier);
+    // const geometryControle = new THREE.BufferGeometry().setFromPoints(tableauPoint);
+    // const geometryBezier = new THREE.BufferGeometry().setFromPoints(pointsBezier);
+    // const geometrySurfaceBezier = new THREE.BufferGeometry().setFromPoints(surfaceBeziers);
+    // const geometryOrigin = new THREE.BufferGeometry().setFromPoints(tabOrigin);
 
     // enregistre tous les points
-    const formeControle = new THREE.Points(geometryControle, material);
-    //const formeLigne = new THREE.Line(geometryControle, materialLigne);
-    const formeBezier = new THREE.Points(geometryBezier, materialBezier);
+    // const formeControle = new THREE.Points(geometryControle, material);
+    // const formeLigne = new THREE.Line(geometryControle, materialLigne);
+    // const formeBezier = new THREE.Points(geometryBezier, materialBezier)
+    // const formeBezierWithTexture = new THREE.Points(geometryBezier, materialWithTexture);
+    // const formeOrigin = new THREE.Line(geometryOrigin, materialOrigin);
 
     // affiche tous les points
     // scene.add(formeControle);
     // scene.add(formeLigne);
-    scene.add(formeBezier);
+    // scene.add(formeBezier);
+    // scene.add(formeBezierWithTexture);
+    // scene.add(formeOrigin);
 
-    //affichage des axes
-    const axesHelper = new THREE.AxesHelper(100);
-    scene.add(axesHelper);
+    // let bezierSurfaceFaces, bezierSurfaceVertices;
+    // [bezierSurfaceVertices, bezierSurfaceFaces] = addSurfaceBezier();
+    // let bezierSurfaceGeometry = new THREE.Geometry();
+    // bezierSurfaceGeometry.vertices = bezierSurfaceVertices;
+    // bezierSurfaceGeometry.faces = bezierSurfaceFaces;
+    // bezierSurfaceGeometry.computeFaceNormals();
+    // bezierSurfaceGeometry.computeVertexNormals();
+    // let bezierSurfaceMaterial = new THREE.MeshLambertMaterial({color: 0x17a6ff, wireframe: false});
+    // let bezierSurface = new THREE.Mesh(bezierSurfaceGeometry, bezierSurfaceMaterial);
+    // bezierSurface.material.side = THREE.DoubleSide;
+    // scene.add(bezierSurface);
+    //
+    // //affichage des axes
+    // // const axesHelper = new THREE.AxesHelper(100);
+    //
+    // // si l'autozoom est coché
+    // if (document.getElementById("zoom").checked === true)
+    //     autoZoom(tableauPoint);
+    //
+    //
+    // // scene.add(axisHelper);
+    // renderer.render(scene, camera);
 
-    // si l'autozoom est coché
-    if (document.getElementById("zoom").checked === true)
-        autoZoom(tableauPoint);
+    // const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    // console.log(controls);
 
-    renderer.render(scene, camera);
-    //scene.add(ligne);
+    var nsControlPoints = [
+        [
+            new THREE.Vector4 ( -150, 0, 150, 1 ),
+            new THREE.Vector4 ( 150, 0, 150, 1 ),
+            new THREE.Vector4 ( 150, 0, -150, 1 ),
+            new THREE.Vector4 ( -150, 0, -150, 1 ),
+            new THREE.Vector4 ( -150, 0, 150, 1 )
+        ],
+        [
+            new THREE.Vector4 ( -50, 50, 50, 1 ),
+            new THREE.Vector4 ( 50, 50, 50, 1 ),
+            new THREE.Vector4 ( 50, 50, -50, 1 ),
+            new THREE.Vector4 ( -50, 50, -50, 1 ),
+            new THREE.Vector4 ( -50, 50, 50, 1 )
+        ],
+        [
+            new THREE.Vector4 ( -100, -50, 100, 1 ),
+            new THREE.Vector4 ( 100, -50, 100, 1 ),
+            new THREE.Vector4 ( 100, -50, -100, 1 ),
+            new THREE.Vector4 ( -100, -50, -100, 1 ),
+            new THREE.Vector4 ( -100, -50, 100, 1 )
+        ],
+    ];
 
+
+    var degree1 = 2;
+    var degree2 = 3;
+    var knots1 = [0, 0, 0, 1, 1, 1];
+    var knots2 = [0, 0, 0, 0, 1, 1, 1, 1];
+    var nurbsSurface = new NURBSSurface(degree1, degree2, knots1, knots2, nsControlPoints);
+
+    var map = new THREE.TextureLoader().load( 'assets/texture.jpg' );
+    map.wrapS = map.wrapT = THREE.RepeatWrapping;
+    map.anisotropy = 16;
+
+    let getSurfacePoint = function (u, v) {
+        return nurbsSurface.getPoint(u, v);
+    };
+
+    var geometry = new THREE.ParametricGeometry( getSurfacePoint, 20, 20 );
+    var material = new THREE.MeshLambertMaterial( { map: map, side: THREE.DoubleSide } );
+    var object = new THREE.Mesh( geometry, material );
+    object.position.set( - 200, 100, 0 );
+    object.scale.multiplyScalar( 1 );
+    scene.add( object );
 }
 
 
@@ -91,7 +193,7 @@ function addPointsBezier(pointsControle) {
 
     let x, y, z, compteur = 0, degre = pointsControle.length - 1, limite;
 
-    let precision = 0.001;
+    let precision = 0.01;
     if (pointsControle.length !== 0)
         // for (let compteur = 0; compteur < pointsControle.length; compteur += 1) {
         for (let t = 0; t < 1; t += precision) {
@@ -114,6 +216,62 @@ function addPointsBezier(pointsControle) {
         }
 
     return points;
+}
+
+// retourne le tableau avec les points de la courbe de Bézier
+function addSurfaceBezier() {
+    if (tableauPoint.length === 0) return [[], []];
+
+    let basicBezierModel = [];  // 4 bezier curves calculated from bezier control points
+    let bezier;
+    let bezierCurveDivisions = 50;
+    // calculating basic bezier model (main 4 bezier curves)
+    for (let i = 0; i < tableauPoint.length; i++) {
+        bezier = new THREE.CubicBezierCurve3(
+            tableauPoint[i][0],
+            tableauPoint[i][1],
+            tableauPoint[i][2],
+            tableauPoint[i][3]
+        )
+        basicBezierModel.push(bezier.getPoints(bezierCurveDivisions));
+    }
+
+
+    let bezierCurvesVertices = [];
+
+    // calculating full bezier model (50 bezier curves in one direction, each containing 50 vertices)
+    for (let i = 0; i <= bezierCurveDivisions; i++) {
+        bezier = new THREE.CubicBezierCurve3(
+            basicBezierModel[0][i],
+            basicBezierModel[1][i],
+            basicBezierModel[2][i],
+            basicBezierModel[3][i]
+        )
+
+        bezierCurvesVertices = bezierCurvesVertices.concat(bezier.getPoints(bezierCurveDivisions));
+    }
+
+
+    // now we've got full bezier model, it's time to create bezier surface and add it to the scene
+    let bezierSurfaceVertices = bezierCurvesVertices;
+    let bezierSurfaceFaces = [];
+
+    // creating faces from vertices
+    let v1, v2, v3;  // vertex indices in bezierSurfaceVertices array
+    for (let i = 0; i < bezierCurveDivisions; i++) {
+        for (let j = 0; j < bezierCurveDivisions; j++) {
+            v1 = i * (bezierCurveDivisions + 1) + j;
+            v2 = (i + 1) * (bezierCurveDivisions + 1) + j;
+            v3 = i * (bezierCurveDivisions + 1) + (j + 1);
+            bezierSurfaceFaces.push(new THREE.Face3(v1, v2, v3));
+
+            v1 = (i + 1) * (bezierCurveDivisions + 1) + j;
+            v2 = (i + 1) * (bezierCurveDivisions + 1) + (j + 1);
+            v3 = i * (bezierCurveDivisions + 1) + (j + 1);
+            bezierSurfaceFaces.push(new THREE.Face3(v1, v2, v3));
+        }
+    }
+    return [bezierSurfaceVertices, bezierSurfaceFaces];
 }
 
 
@@ -286,14 +444,33 @@ function bonus() {
                 {x: 0, y: 1, z: 0},
                 {x: 2, y: 1, z: 0}
             ];
+
+            // ajout d'une deuxième dimension
+            // const tmpTab = JSON.parse(JSON.stringify(tableauPoint));
+            // for (let point of tmpTab)
+            //     point.z = 1;
+            // tableauPoint.push({x: 2, y: 1, z: 0.5});
+            // tableauPoint = tableauPoint.concat(tmpTab);
             break;
 
         case 'courbe2':
             tableauPoint = [
-                {x: 0, y: 0, z: 0},
-                {x: 1, y: 0, z: 0},
-                {x: 0, y: 1, z: 0},
-                {x: 1, y: 1, z: 0}
+                [{x: -10, y: 10, z: 0},
+                    {x: 0, y: 7, z: 0},
+                    {x: 15, y: 3, z: 0},
+                    {x: 30, y: 8, z: 0}],
+                [{x: -10, y: 0, z: 10},
+                    {x: -5, y: 15, z: 10},
+                    {x: 20, y: 10, z: 10},
+                    {x: 30, y: 5, z: 10}],
+                [{x: -10, y: 5, z: 20},
+                    {x: -5, y: -10, z: 20},
+                    {x: 10, y: 10, z: 20},
+                    {x: 30, y: 0, z: 20}],
+                [{x: -10, y: 4, z: 30},
+                    {x: -5, y: 8, z: 30},
+                    {x: 20, y: 6, z: 30},
+                    {x: 30, y: 4, z: 30}]
             ];
             break;
 
@@ -313,4 +490,14 @@ function bonus() {
     allPointSelect();
 
     main();
+}
+
+function origin() {
+    let tab = [];
+    tab.push(new THREE.Vector3(1, 0, 0));
+    tab.push(new THREE.Vector3(0, 0, 0));
+    tab.push(new THREE.Vector3(0, 1, 0));
+    tab.push(new THREE.Vector3(0, 0, 0));
+    tab.push(new THREE.Vector3(0, 0, 1));
+    return tab;
 }

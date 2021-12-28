@@ -51,7 +51,7 @@ canvas {
 /* classe pour le fond */
 .masthead {
     height: 100vh;
-    background: linear-gradient(to bottom, rgba(22, 22, 22, 0.3) 0%, rgba(22, 22, 22, 0.7) 75%, #161616 100%);
+    background: linear-gradient(to bottom, rgba(22, 22, 22, 0.3) 0%, rgba(22, 22, 22, 0.7) 75%, #161616 100%), url(assets/background.jpg);
     background-size: cover;
     margin-top: 0;
 }
