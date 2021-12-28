@@ -1,6 +1,8 @@
+// on crée la caméra de la taille de la fenêtre
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth * 0.6 / window.innerHeight, 1, 500);
 let tableauPoint = []; // tableau contenant les points de controle
 let vecteurNoeud = []; // tableau contenant le vecteur noeud
+let poids = [];        // tableau contenant les poids de chaque points (compris entre 0 et 1, si égale à 1, la courbe passera par ce point)
 
 // permet d'initialiser la zone de dessin / supprimer les points
 function initCanva() {
@@ -15,14 +17,12 @@ function initCanva() {
 function main() {
     let form = document.querySelector('form');
 
-    const renderer = new THREE.WebGLRenderer();
+    const renderer = new THREE.WebGLRenderer({antialias: true});
     renderer.setSize(window.innerWidth * 0.6, window.innerHeight);
 
     // permet de supprimer le canva s'il existe déjà pour l'actualiser
     if (document.querySelector('canvas') !== null) document.querySelector('canvas').remove();
     document.getElementsByClassName('masthead')[0].appendChild(renderer.domElement);
-
-    // on créé la caméra de la taille de la fenêtre
 
     camera.position.set(0, 0, 0);
     camera.lookAt(0, 0, 0);
@@ -37,7 +37,7 @@ function main() {
         color: 0xb1b1b1,
         size: 0.05
     });
-    const materialBezier = new THREE.PointsMaterial({
+    const materialBSpline = new THREE.PointsMaterial({
         color: 0xb1b1b1,
         size: 0.01
     });
@@ -46,37 +46,42 @@ function main() {
         color: 0xb1b1b1
     });
 
-    vecteurNoeud = abSort(tableauPoint);
-
+    // récupère le degré à utiliser sur le formulaire
     let degre = parseInt(form.degre.value);
-    // let degre = 2;
+
+    // TODO : permettre à l'utilisateur de rentrer le vecteur noeud
+    // récupère le vecteur noeud sur le formulaire
+    vecteurNoeud = [];
+
+    // TODO : permettre à l'utilisateur de rentrer le poid de chaque point
+    // récupère le poid sur le formulaire
+    poids = [];
 
     // on ajoute tous les points
-    let tmpPointsBeziers = [];
-    let tmpPoint;
-    for (let t = 0; t < 1; t += 0.001) {
-        tmpPoint = deBoorReccur(t, degre, tableauPoint);
-        tmpPointsBeziers.push(new THREE.Vector3(tmpPoint[0], tmpPoint[1], 0));
+    const pointsBSpline = recupPoints(degre, vecteurNoeud, poids);
+
+    // conversion des points de contrôle à afficher
+    let vecteurControle = [];
+    if (tableauPoint.length !== 0) {
+        if (tableauPoint[0].x === undefined)
+            for (let point of tableauPoint)
+                vecteurControle.push(new THREE.Vector3(point[0], point[1], 0))
+        else vecteurControle = tableauPoint;
     }
 
-    const pointsBezier = tmpPointsBeziers;
-    console.log(pointsBezier);
-
-    // créé un buffer de points à partir du tableau de points
-    let vecteurControle = [];
-    for (let point of tableauPoint) vecteurControle.push(new THREE.Vector3(point[0], point[1], 0))
+    // on créé les buffers de points
     const geometryControle = new THREE.BufferGeometry().setFromPoints(vecteurControle);
-    const geometryBezier = new THREE.BufferGeometry().setFromPoints(pointsBezier);
+    const geometryBSpline = new THREE.BufferGeometry().setFromPoints(pointsBSpline);
 
     // enregistre tous les points
     const formeControle = new THREE.Points(geometryControle, material);
     const formeLigne = new THREE.Line(geometryControle, materialLigne);
-    const formeBezier = new THREE.Points(geometryBezier, materialBezier);
+    const formeBSpline = new THREE.Points(geometryBSpline, materialBSpline);
 
     // affiche tous les points
     scene.add(formeControle);
     scene.add(formeLigne);
-    scene.add(formeBezier);
+    scene.add(formeBSpline);
 
     // si l'autozoom est coché
     if (document.getElementById("zoom").checked === true)
@@ -95,246 +100,106 @@ function abSort(pointsControle) {
     return tabAbscisse;
 }
 
-function recupPoints(degre) {
-    let tmpPointsBezier = [], tmpPointsControles, limite;
-    for (let i = 0; i < tableauPoint.length; i += 1) {
-        limite = degre + 1;
-        for (let j = degre; j > 0; j--)
-            if (tableauPoint[i + j] === undefined) limite = j;
-        tmpPointsControles = tableauPoint.slice().splice(i, limite);
-        tmpPointsBezier = tmpPointsBezier.concat(addPointsBezier(tmpPointsControles));
+function recupPoints(degre, noeuds, poids) {
+    // si l'on a pas de points, pas la peine de tout faire
+    if (tableauPoint.length === 0) return [];
+
+    // conversion du tableau de vecteur en tableau de points
+    let tmpTableauPoint = [];
+    if (tableauPoint[0].x !== undefined)
+        for (let i = 0; i < tableauPoint.length; i++)
+            tmpTableauPoint.push([tableauPoint[i].x, tableauPoint[i].y]);
+    else tmpTableauPoint = tableauPoint;
+
+    // récupération des points de la courbe
+    const tmpPointsBSplines = [];
+    let tmpPoint;
+    for (let t = 0; t < 1; t += 0.001) {
+        tmpPoint = deBoorReccur(t, degre, tmpTableauPoint, noeuds, poids);
+        tmpPointsBSplines.push(new THREE.Vector3(tmpPoint[0], tmpPoint[1], 0));
     }
-    // for (let i = tableauPoint.length; i > 0; i -= 1) {
-    //     limite = degre + 1;
-    //     for (let j = degre; j > 0; j--)
-    //         if (tableauPoint[i + j] === undefined) limite = j;
-    //     tmpPointsControles = tableauPoint.slice().splice(i, -limite);
-    //     tmpPointsBezier = tmpPointsBezier.concat(addPointsBezier(tmpPointsControles));
-    //     console.log(i);
-    // }
 
-    let curve = [];
-
-
-    return tmpPointsBezier;
+    return tmpPointsBSplines
 }
 
-// retourne le tableau avec les points de la courbe de Bézier
-function addPointsBezier(pointsControle) {
-    const points = [];
+// algorithme de De Boor
+function deBoorReccur(t, degre, points, noeuds, poids, result) {
+    let n = points.length;    // nombre de points
+    let d = points[0].length; // dimension des poids (3d ou 2d)
 
-    let x, y, Bi, degre = pointsControle.length - 1;
+    // TODO : - Afficher les textes sur la page en cas d'erreur (sur le html ou via une popup erreur)
+    //        - Utiliser une fonction template dans laquelle on rentre un texte pour la réutiliser à chaque fois
+    if (degre < 1) throw new Error('Le degré doit être au moins égal à 1');
+    if (degre > (n - 1)) throw new Error('Le degré doit être inférieur ou égal au nombre de points - 1');
 
-    let precision = 0.001;
-    if (pointsControle.length !== 0)
-        for (let t = 0; t < 1; t += precision) {
-            x = 0; y = 0;
-
-            for (let i = 0; i < pointsControle.length; i++) {
-                // calcule la coordonnée de ce point en fonction de la formule du polynom de Berstein
-                Bi = binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
-                x += pointsControle[i].x * Bi;
-                y += pointsControle[i].y * Bi;
-            }
-            points.push(new THREE.Vector3(x, y, 0));
-        }
-
-    return points;
-}
-
-// permet de calculer un coefficient binomial
-function binomial(n, k) {
-    if ((typeof n !== 'number') || (typeof k !== 'number'))
-        return false;
-    let coeff = 1;
-    for (let x = n - k + 1; x <= n; x++) coeff *= x;
-    for (let x = 1; x <= k; x++) coeff /= x;
-    return coeff;
-}
-
-function deBoorReccur(t, degree, points, knots, weights, result) {
-    if (points.length === 0) return [];
-    let i,j,s,l;              // function-scoped iteration variables
-    let n = points.length;    // points count
-    let d = points[0].length; // point dimensionality
-
-    if(degree < 1) throw new Error('degree must be at least 1 (linear)');
-    if(degree > (n-1)) throw new Error('degree must be less than or equal to point count - 1');
-
-    if(!weights) {
-        // build weight vector of length [n]
-        weights = [];
-        for(i=0; i<n; i++) {
-            weights[i] = 1;
+    if (poids.length === 0) {
+        // initialise les poids à 1, s'ils n'ont pas déjà été initialisé
+        poids = [];
+        for (let i = 0; i < n; i++) {
+            poids[i] = 1;
         }
     }
 
-    if(!knots) {
-        // build knot vector of length [n + degree + 1]
-        knots = [];
-        for(i=0; i<n+degree+1; i++) {
-            knots[i] = i;
+    if (noeuds.length === 0) {
+        // construit un vecteur de noeud de taille [n + degre + 1]
+        noeuds = [];
+        for (let i = 0; i < n + degre + 1; i++) {
+            noeuds[i] = i;
         }
     } else {
-        if(knots.length !== n+degree+1) throw new Error('bad knot vector length');
+        // TODO : - Afficher les textes sur la page en cas d'erreur (sur le html ou via une popup erreur)
+        //        - Utiliser une fonction template dans laquelle on rentre un texte pour la réutiliser à chaque fois
+        if (noeuds.length !== n + degre + 1) throw new Error('La taille du vecteur de noeud rentré est incorrect');
     }
 
-    let domain = [
-        degree,
-        knots.length-1 - degree
+    let domaine = [
+        degre,
+        noeuds.length - 1 - degre
     ];
 
-    // remap t to the domain where the spline is defined
-    let low  = knots[domain[0]];
-    let high = knots[domain[1]];
-    t = t * (high - low) + low;
+    // transforme t sur le domaine de définition de la spline
+    let min = noeuds[domaine[0]];
+    let max = noeuds[domaine[1]];
+    t = t * (max - min) + min;
 
-    if(t < low || t > high) throw new Error('out of bounds');
+    if (t < min || t > max) throw new Error('Noeud hors limite');
 
-    // find s (the spline segment) for the [t] value provided
-    for(s=domain[0]; s<domain[1]; s++) {
-        if(t >= knots[s] && t <= knots[s+1]) {
+    // on cherche le segment de spline cherché s
+    let s;
+    for (s = domaine[0]; s < domaine[1]; s++)
+        if (t >= noeuds[s] && t <= noeuds[s + 1])
             break;
-        }
-    }
 
-    // convert points to homogeneous coordinates
+    // on convertit les points pour qu'ils aient chacun des coordonnées homogènes
     let v = [];
-    for(i=0; i<n; i++) {
+    for (let i = 0; i < n; i++) {
         v[i] = [];
-        for(j=0; j<d; j++) {
-            v[i][j] = points[i][j] * weights[i];
-        }
-        v[i][d] = weights[i];
+        for (let j = 0; j < d; j++)
+            v[i][j] = points[i][j] * poids[i];
+
+        v[i][d] = poids[i];
     }
 
-    // l (level) goes from 1 to the curve degree + 1
     let alpha;
-    for(l=1; l<=degree+1; l++) {
-        // build level l of the pyramid
-        for(i=s; i>s-degree-1+l; i--) {
-            alpha = (t - knots[i]) / (knots[i+degree+1-l] - knots[i]);
+    for (let l = 1; l <= degre + 1; l++) {
+        for (let i = s; i > s - degre - 1 + l; i--) {
+            alpha = (t - noeuds[i]) / (noeuds[i + degre + 1 - l] - noeuds[i]);
 
-            // interpolate each component
-            for(j=0; j<d+1; j++) {
-                v[i][j] = (1 - alpha) * v[i-1][j] + alpha * v[i][j];
-            }
+            // on créé la courbe à partir de chaque composant
+            for (let j = 0; j < d + 1; j++)
+                v[i][j] = (1 - alpha) * v[i - 1][j] + alpha * v[i][j];
         }
     }
 
-    // convert back to cartesian and return
+    // on reconvertit les coordonnées calculées en coordonnées cartésiennes pour affichage
     result = result || [];
-    for(i=0; i<d; i++) {
+    for (let i = 0; i < d; i++) {
         result[i] = v[s][i] / v[s][d];
     }
 
     return result;
 }
 
-// début implémentation de la méthode de de boor
-async function addPointsDeBoor(pointsControle) {
-    const points = [];
-
-    let x, y, degre = pointsControle.length - 1, ordre = degre++, alpha;
-
-    if (pointsControle.length !== 0) {
-        for (let t of vecteurNoeud) {
-            x = 0;
-            y = 0;
-            for (let i = 0; i < pointsControle.length - degre; i++) {
-                x += await deBoor(pointsControle, ordre, degre, pointsControle[i].x);
-                y += await deBoor(pointsControle, ordre, degre, pointsControle[i].y);
-            }
-            points.push(new THREE.Vector3(x, y, 0))
-        }
-    }
-
-    return points;
-}
-
-async function deBoor(pointsControle, ordre, degre, pos) {
-    let d = [], alpha;
-
-    for (let i = 0; i <= degre; i++) {
-        d.push(pointsControle[i + ordre - degre]);
-    }
-
-    for (let r = 1; r <= degre; r++) {
-        for (let j = degre; j >= r - 1; j--) {
-            alpha = (pos - vecteurNoeud[j + ordre - degre]) / (vecteurNoeud[j + 1 + ordre - r] - vecteurNoeud[j + ordre - degre]);
-            d[j] = (1 - alpha) * d[j - 1] + alpha * d[j];
-        }
-    }
-
-    return d[degre];
-}
-
-async function addPointsBSpline(pointsControle) {
-    const points = [];
-
-    // let x, y, degre = pointsControle.length - 1;
-    let x, y, degre = 2;
-
-    let precision = 0.1;
-    if (pointsControle.length !== 0) {
-        // for (let t = 0; t < 1; t += precision) {
-        for (let t of vecteurNoeud) {
-            let t = 0;
-            x = 0;
-            y = 0;
-            for (let i = 0; i < pointsControle.length - degre; i++) {
-                // calcule la coordonnée de ce point en fonction de la fonction bSpline
-                x += pointsControle[i].x * await bSplineRecur(degre, i, t);
-                y += pointsControle[i].y * await bSplineRecur(degre, i, t);
-            }
-            points.push(new THREE.Vector3(x, y, 0))
-        }
-
-        return points;
-    }
-}
-
-// test autre implémentation s(t)
-async function s(t) {
-    let x = 0, y = 0, degre = 1;
-    for (let i = 0; i < vecteurNoeud.length; i++) {
-        x += tableauPoint[i].x * await bSplineRecur(degre, i, t);
-        y += tableauPoint[i].y * await bSplineRecur(degre, i, t);
-    }
-    // console.log(x, y);
-}
-vecteurNoeud = [0, 1, 2, 3];
-tableauPoint.push(new THREE.Vector3(0, 0));
-tableauPoint.push(new THREE.Vector3(1, 1));
-tableauPoint.push(new THREE.Vector3(2, 3));
-tableauPoint.push(new THREE.Vector3(3, 0));
-s(0).then();
-
-// fonction récursive de bSpline
-async function bSplineRecur(m, i, t) {
-    if (m === 0) {
-        if (vecteurNoeud[i] <= t && t < vecteurNoeud[i + 1]) {
-            return 1;
-        } else {
-            return 0;
-        }
-    } else {
-        if (
-            // au lieu d'effectuer la vérification du cours qui causent de nombreux problèmes
-            // (liés au dépassement du tableau vecteur noeud)
-            // on effectue un test sur le dépassement de vecteur noeud
-            // !(0 <= m && m <= vecteurNoeud.length - 1) ||
-            // !(0 <= i && i <= vecteurNoeud.length - m - 1)
-            vecteurNoeud[i + m + 1] === undefined
-        ) {
-            return 0;
-        } else {
-            // fonction du cours page 82
-            return ((t - vecteurNoeud[i]) / (vecteurNoeud[i + m] - vecteurNoeud[i])) * await bSplineRecur(m - 1, i, t) +
-                ((vecteurNoeud[i + m + 1] - t) / (vecteurNoeud[i + m + 1] - vecteurNoeud[i + 1])) * await bSplineRecur(m - 1, i + 1, t)
-        }
-    }
-}
 
 // permet de dézoomer automatiquement
 function autoZoom(pointsControle) {
@@ -482,17 +347,29 @@ function bonus() {
 
         // courbe utilisé pour Béziers pour comparer le résultat
         case 'courbe2':
+            // tableauPoint = [
+            //     [0, 0],
+            //     [1, 4],
+            //     [3, 5],
+            //     [4, 4],
+            //     [3, 1],
+            //     [6, 1],
+            //     [5, 5],
+            //     [6.5, 6],
+            //     [8, 5],
+            //     [7.5, 2]
+            // ];
             tableauPoint = [
-                [0, 0],
-                [1, 4],
-                [3, 5],
-                [4, 4],
-                [3, 1],
-                [6, 1],
-                [5, 5],
-                [6.5, 6],
-                [8, 5],
-                [7.5, 2]
+                {x: 0, y: 0},
+                {x: 1, y: 4},
+                {x: 3, y: 5},
+                {x: 4, y: 4},
+                {x: 3, y: 1},
+                {x: 6, y: 1},
+                {x: 5, y: 5},
+                {x: 6.5, y: 6},
+                {x: 8, y: 5},
+                {x: 7.5, y: 2}
             ];
             break;
 
