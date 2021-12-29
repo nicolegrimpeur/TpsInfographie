@@ -1,12 +1,34 @@
-// const THREE = require(['https://cdn.skypack.dev/pin/three@v0.135.0-pjGUcRG9Xt70OdXl97VF/mode=imports/optimized/three.js']);
-
-const THREE = require(['./three-js/three']);
-// const NURBSSurface = require(['./libs/NURBSSurface.js']);
-
-
-const camera = new THREE.PerspectiveCamera(45, window.innerWidth * 0.6 / window.innerHeight, 0.1, 1000);
-// const cameraControls = new THREE.OrbitControls(camera);
 let tableauPoint = []; // tableau contenant les points de controle
+let vecteurNoeud = []; // tableau contenant le vecteur noeud
+let poids = [];        // tableau contenant les poids de chaque points (compris entre 0 et 1, si égale à 1, la courbe passera par ce point)
+
+
+///////// initialisation variable three js
+// on crée la caméra de la taille de la fenêtre
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth * 0.6 / window.innerHeight, 1, 500);
+
+// création de la zone d'affichage
+const renderer = new THREE.WebGLRenderer({antialias: true});
+renderer.setSize(window.innerWidth * 0.6, window.innerHeight);
+// on ajoute le canva
+document.getElementsByClassName('masthead')[0].appendChild(renderer.domElement);
+
+// création de la variable permettant la modification de la vision
+let cameraControls = new THREE.OrbitControls(camera, renderer.domElement);
+cameraControls.target = new THREE.Vector3(0,0,0);
+
+// création de la scène
+const scene = new THREE.Scene();
+
+// modification de la scène en fonction du déplacement sur la page
+cameraControls.addEventListener('change', function() {
+    renderer.render(scene, camera);
+});
+
+const texture = new THREE.TextureLoader().load( './assets/texture.jpg' );
+const materialTexture = new THREE.MeshBasicMaterial( { map: texture } );
+
+let formeControle, formeLigne, formeBSpline;
 
 // permet d'initialiser la zone de dessin / supprimer les points
 function initCanva() {
@@ -19,306 +41,245 @@ function initCanva() {
 function main() {
     let form = document.querySelector('form');
 
-    const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth * 0.6, window.innerHeight);
-    renderer.setClearColor(0xEEEEEE);
+    if (formeControle) scene.remove(formeControle);
+    if (formeLigne) scene.remove(formeLigne);
+    if (formeBSpline) scene.remove(formeBSpline);
 
-    let axesHelper = new THREE.AxesHelper(20);
-
-    // permet de supprimer le canva s'il existe déjà pour l'actualiser
-    if (document.querySelector('canvas') !== null) document.querySelector('canvas').remove();
-    document.getElementsByClassName('masthead')[0].appendChild(renderer.domElement);
-
-    // on créé la caméra de la taille de la fenêtre
     camera.position.set(0, 0, 0);
     camera.lookAt(0, 0, 0);
 
-    const cameraControls = new THREE.OrbitControls(camera, renderer.domElement);
-    // camera.position.x = -60;
-    // camera.position.y = 50;
-    // camera.position.z = -40;
-    // camera.lookAt(new THREE.Vector3(20,0,15));
-    // camera.updateProjectionMatrix();
-    // cameraControls.target = new THREE.Vector3(20,0,15);
-
     // à faire, permettre à l'utilisateur de gérer le dézoom
-    // camera.position.z = form.dezoom.value;
-
-    const scene = new THREE.Scene();
+    camera.position.z = form.dezoom.value;
 
     // couleur et taille de chaque point
-    // const material = new THREE.PointsMaterial({
-    //     color: 0xb1b1b1,
-    //     size: 0.05
-    // });
-    // const materialBezier = new THREE.PointsMaterial({
-    //     color: 0xb1b1b1,
-    //     size: 0.01
-    // });
-    //
-    // const materialLigne = new THREE.LineBasicMaterial({
-    //     color: 0xb1b1b1
-    // });
-    //
-    // const materialOrigin = new THREE.LineBasicMaterial({
-    //     color: 0xb1b1b1,
-    //     linewidth: 1
-    // });
+    const material = new THREE.PointsMaterial({
+        color: 0xb1b1b1,
+        size: 0.05
+    });
+    const materialBSpline = new THREE.PointsMaterial({
+        color: 0x535355,
+        size: 0.01
+    });
 
-    // const texture = new THREE.TextureLoader().load('assets/texture.jpg');
+    const materialLigne = new THREE.LineBasicMaterial({
+        color: 0xb1b1b1
+    });
 
-    // immediately use the texture for material creation
-    // const materialWithTexture = new THREE.MeshBasicMaterial({color: 0xFF0000});
+    // récupère le degré à utiliser sur le formulaire
+    let degre = parseInt(form.degre.value);
+
+    // récupère le vecteur noeud sur le formulaire
+    vecteurNoeud = [];
+
+    // récupère le poid sur le formulaire
+    poids = [[1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 10], [1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 10]];
+    console.log(tableauPoint);
 
     // on ajoute tous les points
-    // let tmpPointsBezier = [], tmpPointsControles, limite;
-    // for (let i = 0; i < tableauPoint.length; i += 2) {
-    //     limite = 3;
-    //     if (tableauPoint[i + 2] === undefined) limite = 2;
-    //     if (tableauPoint[i + 1] === undefined) limite = 1;
-    //     tmpPointsControles = tableauPoint.slice().splice(i, limite);
-    //     tmpPointsBezier = tmpPointsBezier.concat(addPointsBezier(tmpPointsControles));
-    // }
-    // const pointsBezier = tmpPointsBezier;
-    //
-    // const surfaceBeziers = [];
-    // console.log(pointsBezier.length);
+    const pointsBSpline = recupPoints(degre, vecteurNoeud, poids);
+    let geometryControle, geometryBSpline, vecteurControle;
+    for (let i = 0; i < pointsBSpline.length; i++) {
+        // conversion des points de contrôle à afficher
+        vecteurControle = [];
+        if (tableauPoint.length !== 0) {
+            if (tableauPoint[i] !== undefined) {
+                if (tableauPoint[i][0].x === undefined)
+                    for (let point of tableauPoint[i])
+                        vecteurControle.push(new THREE.Vector3(point[0], point[1], point[2]))
+                else vecteurControle = tableauPoint[i];
+            }
+        }
 
-    // for (let i = 0; i < pointsBezier.length; i++) {
-    //     for (let j = 0; j < pointsBezier.length; j++) {
-    //         if (i !== j) {
-    //             surfaceBeziers.push(pointsBezier[j]);
-    //         }
-    //     }
-    // }
-    const tabOrigin = origin();
 
-    // créé un buffer de points à partir du tableau de points
-    // const geometryControle = new THREE.BufferGeometry().setFromPoints(tableauPoint);
-    // const geometryBezier = new THREE.BufferGeometry().setFromPoints(pointsBezier);
-    // const geometrySurfaceBezier = new THREE.BufferGeometry().setFromPoints(surfaceBeziers);
-    // const geometryOrigin = new THREE.BufferGeometry().setFromPoints(tabOrigin);
+        // on créé les buffers de points
+        geometryControle = new THREE.BufferGeometry().setFromPoints(vecteurControle);
+        formeControle = new THREE.Points(geometryControle, material);
+        // enregistre tous les points
+        formeLigne = new THREE.Line(geometryControle, materialLigne);
 
-    // enregistre tous les points
-    // const formeControle = new THREE.Points(geometryControle, material);
-    // const formeLigne = new THREE.Line(geometryControle, materialLigne);
-    // const formeBezier = new THREE.Points(geometryBezier, materialBezier)
-    // const formeBezierWithTexture = new THREE.Points(geometryBezier, materialWithTexture);
-    // const formeOrigin = new THREE.Line(geometryOrigin, materialOrigin);
+        // affiche tous les points
+        scene.add(formeControle);
+        // scene.add(formeLigne);
 
-    // affiche tous les points
-    // scene.add(formeControle);
-    // scene.add(formeLigne);
-    // scene.add(formeBezier);
-    // scene.add(formeBezierWithTexture);
-    // scene.add(formeOrigin);
 
-    // let bezierSurfaceFaces, bezierSurfaceVertices;
-    // [bezierSurfaceVertices, bezierSurfaceFaces] = addSurfaceBezier();
-    // let bezierSurfaceGeometry = new THREE.Geometry();
-    // bezierSurfaceGeometry.vertices = bezierSurfaceVertices;
-    // bezierSurfaceGeometry.faces = bezierSurfaceFaces;
-    // bezierSurfaceGeometry.computeFaceNormals();
-    // bezierSurfaceGeometry.computeVertexNormals();
-    // let bezierSurfaceMaterial = new THREE.MeshLambertMaterial({color: 0x17a6ff, wireframe: false});
-    // let bezierSurface = new THREE.Mesh(bezierSurfaceGeometry, bezierSurfaceMaterial);
-    // bezierSurface.material.side = THREE.DoubleSide;
-    // scene.add(bezierSurface);
-    //
-    // //affichage des axes
-    // // const axesHelper = new THREE.AxesHelper(100);
-    //
-    // // si l'autozoom est coché
-    // if (document.getElementById("zoom").checked === true)
-    //     autoZoom(tableauPoint);
-    //
-    //
-    // // scene.add(axisHelper);
-    // renderer.render(scene, camera);
+        geometryBSpline = new THREE.BufferGeometry().setFromPoints(pointsBSpline[i]);
+        formeBSpline = new THREE.Line(geometryBSpline, materialBSpline);
+        // formeBSpline = new THREE.Mesh( geometryBSpline, materialTexture );
+        scene.add(formeBSpline);
+    }
 
-    // const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    // console.log(controls);
+    console.log(pointsBSpline);
 
-    var nsControlPoints = [
-        [
-            new THREE.Vector4 ( -150, 0, 150, 1 ),
-            new THREE.Vector4 ( 150, 0, 150, 1 ),
-            new THREE.Vector4 ( 150, 0, -150, 1 ),
-            new THREE.Vector4 ( -150, 0, -150, 1 ),
-            new THREE.Vector4 ( -150, 0, 150, 1 )
-        ],
-        [
-            new THREE.Vector4 ( -50, 50, 50, 1 ),
-            new THREE.Vector4 ( 50, 50, 50, 1 ),
-            new THREE.Vector4 ( 50, 50, -50, 1 ),
-            new THREE.Vector4 ( -50, 50, -50, 1 ),
-            new THREE.Vector4 ( -50, 50, 50, 1 )
-        ],
-        [
-            new THREE.Vector4 ( -100, -50, 100, 1 ),
-            new THREE.Vector4 ( 100, -50, 100, 1 ),
-            new THREE.Vector4 ( 100, -50, -100, 1 ),
-            new THREE.Vector4 ( -100, -50, -100, 1 ),
-            new THREE.Vector4 ( -100, -50, 100, 1 )
-        ],
+    if (pointsBSpline[1] !== undefined) {
+        let tmpPoints = [];
+        for (let i = 0; i < pointsBSpline[0].length; i++) {
+            if (!(pointsBSpline[0][i].x === 0 && pointsBSpline[0][i].y === 0 && pointsBSpline[0][i].z === 0)) {
+                tmpPoints.push({x: pointsBSpline[0][i].x, y: pointsBSpline[0][i].y, z: pointsBSpline[0][i].z});
+                tmpPoints.push({x: pointsBSpline[1][i].x, y: pointsBSpline[1][i].y, z: pointsBSpline[1][i].z});
+            }
+        }
+        geometryBSpline = new THREE.BufferGeometry().setFromPoints(tmpPoints);
+        formeBSpline = new THREE.Line(geometryBSpline, materialBSpline);
+        // formeBSpline = new THREE.Mesh( geometryBSpline, materialTexture );
+        scene.add(formeBSpline);
+
+        // for (let t = 0; t <= 1; t += 0.1)
+        //     for (let i = 0; i < pointsBSpline[0].length; i++)
+        //         tmpPoints.push({x: pointsBSpline[1][i].x, y: pointsBSpline[1][i].y, z: pointsBSpline[1][i].z * t});
+        // geometryBSpline = new THREE.BufferGeometry().setFromPoints(tmpPoints);
+        // // formeBSpline = new THREE.Points(geometryBSpline, materialBSpline);
+        // formeBSpline = new THREE.Mesh( geometryBSpline, materialTexture );
+        // scene.add(formeBSpline);
+    }
+
+
+    // si l'autozoom est coché
+    if (document.getElementById("zoom").checked === true)
+        autoZoom(vecteurControle);
+
+    renderer.render(scene, camera);
+}
+
+
+function recupPoints(degre, noeuds, poids) {
+    // si l'on a pas de points, pas la peine de tout faire
+    if (tableauPoint.length === 0) return [];
+
+
+    let tmpTableauPoint;
+    let tmpPointsBSplines = [];
+    let tmpPoint, tmpTaille;
+    // for (let j = 0; j < tableauPoint.length; j++) {
+    for (let j = 0; j < 2; j++) {
+        tmpTableauPoint = [];
+        // conversion du tableau de vecteur en tableau de points
+        if (tableauPoint[j][0].x !== undefined)
+            for (let i = 0; i < tableauPoint[j].length; i++)
+                tmpTableauPoint.push([tableauPoint[j][i].x, tableauPoint[j][i].y, tableauPoint[j][i].z]);
+        else tmpTableauPoint = tableauPoint[j];
+
+        // récupération des points de la courbe
+        tmpPointsBSplines.push([]);
+        for (let t = 0; t < 1; t += 0.0001) {
+            tmpPoint = deBoorReccur(t, degre, tmpTableauPoint, noeuds, poids[j]);
+            tmpPointsBSplines[j].push(new THREE.Vector3(tmpPoint[0], tmpPoint[1], tmpPoint[2]));
+            tmpPointsBSplines[j].push(new THREE.Vector3(0, 0, tmpPoint[2]));
+        }
+    }
+
+    return tmpPointsBSplines;
+}
+
+// algorithme de De Boor
+function deBoorReccur(t, degre, points, noeuds, poids, result) {
+    let n = points.length;    // nombre de points
+    let d = points[0].length; // dimension des poids (3d ou 2d)
+
+    // TODO : - Afficher les textes sur la page en cas d'erreur (sur le html ou via une popup erreur)
+    //        - Utiliser une fonction template dans laquelle on rentre un texte pour la réutiliser à chaque fois
+    if (degre < 1) throw new Error('Le degré doit être au moins égal à 1');
+    if (degre > (n - 1)) throw new Error('Le degré doit être inférieur ou égal au nombre de points - 1');
+
+    if (poids.length === 0) {
+        // initialise les poids à 1, s'ils n'ont pas déjà été initialisé
+        poids = [];
+        for (let i = 0; i < n; i++) {
+            poids[i] = 1;
+        }
+    }
+
+    if (noeuds.length === 0) {
+        // construit un vecteur de noeud de taille [n + degre + 1]
+        noeuds = [];
+        for (let i = 0; i < n + degre + 1; i++) {
+            noeuds[i] = i;
+        }
+    } else {
+        // TODO : - Afficher les textes sur la page en cas d'erreur (sur le html ou via une popup erreur)
+        //        - Utiliser une fonction template dans laquelle on rentre un texte pour la réutiliser à chaque fois
+        if (noeuds.length !== n + degre + 1) throw new Error('La taille du vecteur de noeud rentré est incorrect');
+    }
+
+    let domaine = [
+        degre,
+        noeuds.length - 1 - degre
     ];
 
+    // transforme t sur le domaine de définition de la spline
+    let min = noeuds[domaine[0]];
+    let max = noeuds[domaine[1]];
+    t = t * (max - min) + min;
 
-    var degree1 = 2;
-    var degree2 = 3;
-    var knots1 = [0, 0, 0, 1, 1, 1];
-    var knots2 = [0, 0, 0, 0, 1, 1, 1, 1];
-    var nurbsSurface = new NURBSSurface(degree1, degree2, knots1, knots2, nsControlPoints);
+    if (t < min || t > max) throw new Error('Noeud hors limite');
 
-    var map = new THREE.TextureLoader().load( 'assets/texture.jpg' );
-    map.wrapS = map.wrapT = THREE.RepeatWrapping;
-    map.anisotropy = 16;
+    // on cherche le segment de spline cherché s
+    let s;
+    for (s = domaine[0]; s < domaine[1]; s++)
+        if (t >= noeuds[s] && t <= noeuds[s + 1])
+            break;
 
-    let getSurfacePoint = function (u, v) {
-        return nurbsSurface.getPoint(u, v);
-    };
+    // on convertit les points pour qu'ils aient chacun des coordonnées homogènes
+    let v = [];
+    for (let i = 0; i < n; i++) {
+        v[i] = [];
+        for (let j = 0; j < d; j++)
+            v[i][j] = points[i][j] * poids[i];
 
-    var geometry = new THREE.ParametricGeometry( getSurfacePoint, 20, 20 );
-    var material = new THREE.MeshLambertMaterial( { map: map, side: THREE.DoubleSide } );
-    var object = new THREE.Mesh( geometry, material );
-    object.position.set( - 200, 100, 0 );
-    object.scale.multiplyScalar( 1 );
-    scene.add( object );
-}
-
-
-// retourne le tableau avec les points de la courbe de Bézier
-function addPointsBezier(pointsControle) {
-    const points = [];
-
-    let x, y, z, compteur = 0, degre = pointsControle.length - 1, limite;
-
-    let precision = 0.01;
-    if (pointsControle.length !== 0)
-        // for (let compteur = 0; compteur < pointsControle.length; compteur += 1) {
-        for (let t = 0; t < 1; t += precision) {
-            x = 0;
-            y = 0;
-            z = 0;
-
-            // limite = 3;
-            // if (pointsControle[compteur + 2] === undefined) limite = 2;
-            // if (pointsControle[compteur + 1] === undefined) limite = 1;
-
-            // for (let i = compteur; i < compteur + limite; i++) {
-            for (let i = 0; i < pointsControle.length; i++) {
-                // calcule la coordonnée de ce point en fonction de la formule du polynom de Berstein
-                x += pointsControle[i].x * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
-                y += pointsControle[i].y * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
-                z += pointsControle[i].z * binomial(degre, i) * Math.pow(1 - t, degre - i) * Math.pow(t, i);
-            }
-            points.push(new THREE.Vector3(x, y, z));
-        }
-
-    return points;
-}
-
-// retourne le tableau avec les points de la courbe de Bézier
-function addSurfaceBezier() {
-    if (tableauPoint.length === 0) return [[], []];
-
-    let basicBezierModel = [];  // 4 bezier curves calculated from bezier control points
-    let bezier;
-    let bezierCurveDivisions = 50;
-    // calculating basic bezier model (main 4 bezier curves)
-    for (let i = 0; i < tableauPoint.length; i++) {
-        bezier = new THREE.CubicBezierCurve3(
-            tableauPoint[i][0],
-            tableauPoint[i][1],
-            tableauPoint[i][2],
-            tableauPoint[i][3]
-        )
-        basicBezierModel.push(bezier.getPoints(bezierCurveDivisions));
+        v[i][d] = poids[i];
     }
 
+    let alpha;
+    for (let l = 1; l <= degre + 1; l++) {
+        for (let i = s; i > s - degre - 1 + l; i--) {
+            alpha = (t - noeuds[i]) / (noeuds[i + degre + 1 - l] - noeuds[i]);
 
-    let bezierCurvesVertices = [];
-
-    // calculating full bezier model (50 bezier curves in one direction, each containing 50 vertices)
-    for (let i = 0; i <= bezierCurveDivisions; i++) {
-        bezier = new THREE.CubicBezierCurve3(
-            basicBezierModel[0][i],
-            basicBezierModel[1][i],
-            basicBezierModel[2][i],
-            basicBezierModel[3][i]
-        )
-
-        bezierCurvesVertices = bezierCurvesVertices.concat(bezier.getPoints(bezierCurveDivisions));
-    }
-
-
-    // now we've got full bezier model, it's time to create bezier surface and add it to the scene
-    let bezierSurfaceVertices = bezierCurvesVertices;
-    let bezierSurfaceFaces = [];
-
-    // creating faces from vertices
-    let v1, v2, v3;  // vertex indices in bezierSurfaceVertices array
-    for (let i = 0; i < bezierCurveDivisions; i++) {
-        for (let j = 0; j < bezierCurveDivisions; j++) {
-            v1 = i * (bezierCurveDivisions + 1) + j;
-            v2 = (i + 1) * (bezierCurveDivisions + 1) + j;
-            v3 = i * (bezierCurveDivisions + 1) + (j + 1);
-            bezierSurfaceFaces.push(new THREE.Face3(v1, v2, v3));
-
-            v1 = (i + 1) * (bezierCurveDivisions + 1) + j;
-            v2 = (i + 1) * (bezierCurveDivisions + 1) + (j + 1);
-            v3 = i * (bezierCurveDivisions + 1) + (j + 1);
-            bezierSurfaceFaces.push(new THREE.Face3(v1, v2, v3));
+            // on créé la courbe à partir de chaque composant
+            for (let j = 0; j < d + 1; j++)
+                v[i][j] = (1 - alpha) * v[i - 1][j] + alpha * v[i][j];
         }
     }
-    return [bezierSurfaceVertices, bezierSurfaceFaces];
+
+    // on reconvertit les coordonnées calculées en coordonnées cartésiennes pour affichage
+    result = result || [];
+    for (let i = 0; i < d; i++) {
+        result[i] = v[s][i] / v[s][d];
+    }
+
+    return result;
 }
 
-
-// permet de calculer un coefficient binomial
-function binomial(n, k) {
-    if ((typeof n !== 'number') || (typeof k !== 'number'))
-        return false;
-    let coeff = 1;
-    for (let x = n - k + 1; x <= n; x++) coeff *= x;
-    for (let x = 1; x <= k; x++) coeff /= x;
-    return coeff;
-}
 
 
 // permet de dézoomer automatiquement
 function autoZoom() {
+    const tmpTab = (tableauPoint.length === 0) ? tableauPoint : tableauPoint[0];
     if (tableauPoint.length === 1) {
-        camera.position.set(tableauPoint[0].x, tableauPoint[0].y, 1);
-        camera.lookAt(tableauPoint[0].x, tableauPoint[0].y, 1);
+        camera.position.set(tmpTab[0].x, tmpTab[0].y, 1);
+        camera.lookAt(tmpTab[0].x, tmpTab[0].y, 1);
     } else {
         let Xmin = 999., Xmax = -999., Ymin = 999., Ymax = -999.;
 
-        for (let i = 0; i < tableauPoint.length; i++) {
-            if (Xmin > tableauPoint[i].x)
-                Xmin = tableauPoint[i].x;
-            if (Xmax < tableauPoint[i].x)
-                Xmax = tableauPoint[i].x;
-            if (Ymin > tableauPoint[i].y)
-                Ymin = tableauPoint[i].y;
-            if (Ymax < tableauPoint[i].y)
-                Ymax = tableauPoint[i].y;
+        for (let i = 0; i < tmpTab.length; i++) {
+            if (Xmin > tmpTab[i].x)
+                Xmin = tmpTab[i].x;
+            if (Xmax < tmpTab[i].x)
+                Xmax = tmpTab[i].x;
+            if (Ymin > tmpTab[i].y)
+                Ymin = tmpTab[i].y;
+            if (Ymax < tmpTab[i].y)
+                Ymax = tmpTab[i].y;
         }
 
         let Xmoy = (Xmax - Xmin) / 2;
         let Ymoy = (Ymax - Ymin) / 2;
 
-        if (Xmoy > Ymoy) {
-            let dezoom = (Xmax - Xmin) * 1.25;
-            camera.position.set(Xmin + Xmoy, Ymin + Ymoy, dezoom);
-            camera.lookAt(Xmin + Xmoy, Ymin + Ymoy, dezoom);
+        let dezoom;
+        if (Xmoy > Ymoy) dezoom = (Xmax - Xmin) * 1.25;
+        else dezoom = (Ymax - Ymin) * 2;
 
-        } else {
-            let dezoom = (Ymax - Ymin) * 2;
-            camera.position.set(Xmin + Xmoy, Ymin + Ymoy, dezoom);
-            camera.lookAt(Xmin + Xmoy, Ymin + Ymoy, dezoom);
-
-        }
+        camera.position.set(Xmin + Xmoy, Ymin + Ymoy, dezoom);
+        camera.lookAt(Xmin + Xmoy, Ymin + Ymoy, dezoom);
+        cameraControls.target = new THREE.Vector3(Xmin + Xmoy,Ymin + Ymoy, 0);
     }
 }
 
@@ -368,20 +329,20 @@ function removePointSelect() {
 
 // remet tous les points dans le select
 function allPointSelect() {
-    let div, option;
-    div = document.getElementsByName('pointFigure')[0];
-
-    const tmp = div.children.length
-    for (let i = 1; i < tmp; i++)
-        div.children[1].remove();
-
-    for (const [index, point] of tableauPoint.entries()) {
-        option = document.createElement('option');
-        div.appendChild(option);
-        option.setAttribute('value', String(index + 1));
-        option.textContent =
-            'Point ' + (index + 1) + ' (' + point.x + ', ' + point.y + ', ' + point.z + ')';
-    }
+    // let div, option;
+    // div = document.getElementsByName('pointFigure')[0];
+    //
+    // const tmp = div.children.length
+    // for (let i = 1; i < tmp; i++)
+    //     div.children[1].remove();
+    //
+    // for (const [index, point] of tableauPoint[0].entries()) {
+    //     option = document.createElement('option');
+    //     div.appendChild(option);
+    //     option.setAttribute('value', String(index + 1));
+    //     option.textContent =
+    //         'Point ' + (index + 1) + ' (' + point.x + ', ' + point.y + ', ' + point.z + ')';
+    // }
 
     afficherPoint();
 }
@@ -425,7 +386,7 @@ function bonus() {
 
     switch (form.bonus.value) {
         case 'courbe1':
-            tableauPoint = [
+            tableauPoint = [[
                 {x: 2, y: 1, z: 0},
                 {x: 3, y: 2, z: 0},
                 {x: 4.5, y: 1.5, z: 0},
@@ -443,14 +404,14 @@ function bonus() {
                 {x: -2, y: 1, z: 0},
                 {x: 0, y: 1, z: 0},
                 {x: 2, y: 1, z: 0}
-            ];
+            ]];
 
+            // tableauPoint[0].push({x: 2, y: 1, z: 0.5});
             // ajout d'une deuxième dimension
-            // const tmpTab = JSON.parse(JSON.stringify(tableauPoint));
-            // for (let point of tmpTab)
-            //     point.z = 1;
-            // tableauPoint.push({x: 2, y: 1, z: 0.5});
-            // tableauPoint = tableauPoint.concat(tmpTab);
+            const tmpTab = JSON.parse(JSON.stringify(tableauPoint[0]));
+            for (let point of tmpTab)
+                point.z = 1;
+            tableauPoint.push(tmpTab);
             break;
 
         case 'courbe2':
