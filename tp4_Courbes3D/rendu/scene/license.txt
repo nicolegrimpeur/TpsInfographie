@@ -1,0 +1,11 @@
+Model Information:
+* title:	Site minier d'Arenberg
+* source:	https://sketchfab.com/3d-models/site-minier-darenberg-39177f2a8fbc40ee979bf4612faac3b5
+* author:	Nicolas (https://sketchfab.com/nicolas-lissarrague)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Site minier d'Arenberg" (https://sketchfab.com/3d-models/site-minier-darenberg-39177f2a8fbc40ee979bf4612faac3b5) by Nicolas (https://sketchfab.com/nicolas-lissarrague) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

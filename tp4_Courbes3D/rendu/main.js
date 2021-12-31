@@ -19,6 +19,7 @@ cameraControls.target = new THREE.Vector3(0,0,0);
 
 // création de la scène
 const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xdddddd);
 
 // modification de la scène en fonction du déplacement sur la page
 cameraControls.addEventListener('change', function() {
@@ -27,6 +28,22 @@ cameraControls.addEventListener('change', function() {
 
 const texture = new THREE.TextureLoader().load( './assets/texture.jpg' );
 const materialTexture = new THREE.MeshBasicMaterial( { map: texture } );
+
+const hlight = new THREE.AmbientLight (0x404040, 9);
+scene.add(hlight);
+
+const echelleCle = 0.02;
+
+const mine = new THREE.GLTFLoader();
+mine.load('./scene/scene.gltf', function ( gltf ) {
+    // modification de la position de la map pour qu'elle s'affiche bien sous la clé
+    let mineOptions = gltf.scene.children[0];
+    // mineOptions.scale.set(1, 1, 1);
+    mineOptions.position.set(0, -3.68, 0);
+    scene.add( gltf.scene );
+}, undefined, function ( error ) {
+    console.error( error );
+} );
 
 let formeControle, formeLigne, formeBSpline;
 
@@ -174,14 +191,15 @@ function recupPoints(degre, noeuds, poids) {
 
         // récupération des points de la courbe
         tmpPointsBSplines.push([]);
-        for (let t = 0; t < 1; t += 0.0001) {
+        // for (let t = 0; t < 1; t += 0.0001) {
+        for (let t = 0; t < 1; t += 0.001) {
             tmpPoint = deBoorReccur(t, degre, tmpTableauPoint, noeuds, poids);
 
             // ajout du point de la courbe
-            tmpPointsBSplines[j].push(new THREE.Vector3(tmpPoint[0], tmpPoint[1], tmpPoint[2]));
+            tmpPointsBSplines[j].push(new THREE.Vector3(tmpPoint[0] * echelleCle, tmpPoint[1] * echelleCle, tmpPoint[2] * echelleCle));
 
             // ajout d'un point à l'origine -> permet de tracer la surface à l'aide d'une ligne vers l'origine
-            tmpPointsBSplines[j].push(new THREE.Vector3(0, 0, tmpPoint[2]));
+            tmpPointsBSplines[j].push(new THREE.Vector3(0, 0, tmpPoint[2] * echelleCle));
         }
     }
 
@@ -191,7 +209,7 @@ function recupPoints(degre, noeuds, poids) {
 // algorithme de De Boor
 function deBoorReccur(t, degre, points, noeuds, poids, result) {
     let n = points.length;    // nombre de points
-    let d = points[0].length; // dimension des poids (3d ou 2d)
+    let d = points[0].length; // dimension des points (3d ou 2d)
 
     if (degre < 1) throw new Error('Le degré doit être au moins égal à 1');
     if (degre > (n - 1)) throw new Error('Le degré doit être inférieur ou égal au nombre de points - 1');
