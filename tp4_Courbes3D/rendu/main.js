@@ -33,6 +33,7 @@ let formeControle, formeLigne, formeBSpline;
 // permet d'initialiser la zone de dessin / supprimer les points
 function initCanva() {
     tableauPoint = [[
+        {x: 0, y: 1, z: 0},
         {x: 2, y: 1, z: 0},
         {x: 3, y: 2, z: 0},
         {x: 4.5, y: 1.5, z: 0},
@@ -98,7 +99,7 @@ function main() {
     vecteurNoeud = [];
 
     // poids de chaques points
-    poids = [1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 10];
+    poids = [0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1];
 
     // on récupère les points tous les points
     const pointsBSpline = recupPoints(degre, vecteurNoeud, poids);
@@ -128,7 +129,7 @@ function main() {
         // affiche le polygone de contrôle
         // scene.add(formeLigne);
 
-        // ajoute la courbe BSpline sous forme de lignes
+        // ajoute la courbe BSpline sous forme de lignes vers l'origine
         geometryBSpline = new THREE.BufferGeometry().setFromPoints(pointsBSpline[i]);
         formeBSpline = new THREE.Line(geometryBSpline, materialBSplineFaces);
         scene.add(formeBSpline);
@@ -145,16 +146,6 @@ function main() {
         geometryBSpline = new THREE.BufferGeometry().setFromPoints(tmpPoints);
         formeBSpline = new THREE.Line(geometryBSpline, materialBSplineProfondeur);
         scene.add(formeBSpline);
-
-
-        // tests pour ajouter pleins de points pour créer la surface
-        // for (let t = 0; t <= 1; t += 0.1)
-        //     for (let i = 0; i < pointsBSpline[0].length; i++)
-        //         tmpPoints.push({x: pointsBSpline[1][i].x, y: pointsBSpline[1][i].y, z: pointsBSpline[1][i].z * t});
-        // geometryBSpline = new THREE.BufferGeometry().setFromPoints(tmpPoints);
-        // // formeBSpline = new THREE.Points(geometryBSpline, materialBSpline);
-        // formeBSpline = new THREE.Mesh( geometryBSpline, materialTexture );
-        // scene.add(formeBSpline);
     }
 
 
@@ -173,8 +164,7 @@ function recupPoints(degre, noeuds, poids) {
     let tmpTableauPoint;
     let tmpPointsBSplines = [];
     let tmpPoint;
-    // for (let j = 0; j < tableauPoint.length; j++) {
-    for (let j = 0; j < 2; j++) {
+    for (let j = 0; j < tableauPoint.length; j++) {
         tmpTableauPoint = [];
         // conversion du tableau de vecteur en tableau de points
         if (tableauPoint[j][0].x !== undefined)
@@ -186,7 +176,11 @@ function recupPoints(degre, noeuds, poids) {
         tmpPointsBSplines.push([]);
         for (let t = 0; t < 1; t += 0.0001) {
             tmpPoint = deBoorReccur(t, degre, tmpTableauPoint, noeuds, poids);
+
+            // ajout du point de la courbe
             tmpPointsBSplines[j].push(new THREE.Vector3(tmpPoint[0], tmpPoint[1], tmpPoint[2]));
+
+            // ajout d'un point à l'origine -> permet de tracer la surface à l'aide d'une ligne vers l'origine
             tmpPointsBSplines[j].push(new THREE.Vector3(0, 0, tmpPoint[2]));
         }
     }
