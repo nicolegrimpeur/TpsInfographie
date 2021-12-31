@@ -1,7 +1,5 @@
 let tableauPoint = []; // tableau contenant les points de controle
-let vecteurNoeud = []; // tableau contenant le vecteur noeud
-let poids = [];        // tableau contenant les poids de chaque points (compris entre 0 et 1, si égale à 1, la courbe passera par ce point)
-
+let formeControle, formeLigne, formeBSpline; // formes dans lesquelles seront stockés les différentes parties de la clé à molette
 
 ///////// initialisation variables three js
 // on crée la caméra de la taille de la fenêtre
@@ -26,26 +24,28 @@ cameraControls.addEventListener('change', function() {
     renderer.render(scene, camera);
 });
 
+// appel de la texture (non utilisé)
 const texture = new THREE.TextureLoader().load( './assets/texture.jpg' );
 const materialTexture = new THREE.MeshBasicMaterial( { map: texture } );
 
+// création de la lumière
 const hlight = new THREE.AmbientLight (0x404040, 9);
 scene.add(hlight);
 
+// echelle de la clé par rapport à la map
 const echelleCle = 0.02;
 
+// import de la map
 const mine = new THREE.GLTFLoader();
 mine.load('./scene/scene.gltf', function ( gltf ) {
     // modification de la position de la map pour qu'elle s'affiche bien sous la clé
     let mineOptions = gltf.scene.children[0];
-    // mineOptions.scale.set(1, 1, 1);
     mineOptions.position.set(0, -3.68, 0);
     scene.add( gltf.scene );
 }, undefined, function ( error ) {
     console.error( error );
 } );
 
-let formeControle, formeLigne, formeBSpline;
 
 // permet d'initialiser la zone de dessin / supprimer les points
 function initCanva() {
@@ -70,7 +70,6 @@ function initCanva() {
         {x: 2, y: 1, z: 0}
     ]];
 
-    // tableauPoint[0].push({x: 2, y: 1, z: 0.5});
     // ajout d'une deuxième dimension
     const tmpTab = JSON.parse(JSON.stringify(tableauPoint[0]));
     for (let point of tmpTab)
@@ -113,10 +112,10 @@ function main() {
     let degre = 2;
 
     // vecteur noeud de la courbe
-    vecteurNoeud = [];
+    let vecteurNoeud = [];
 
     // poids de chaques points
-    poids = [0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1];
+    let poids = [0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1, 0.5, 1];
 
     // on récupère les points tous les points
     const pointsBSpline = recupPoints(degre, vecteurNoeud, poids);
