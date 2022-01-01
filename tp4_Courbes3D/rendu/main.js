@@ -304,7 +304,7 @@ function autoZoom() {
         let Xmoy = (Xmax - Xmin) / 2;
         let Ymoy = (Ymax - Ymin) / 2;
 
-        const dezoom = 1;
+        const dezoom = 2;
 
         camera.position.set(Xmin + Xmoy, Ymin + Ymoy, dezoom);
         camera.lookAt(Xmin + Xmoy, Ymin + Ymoy, dezoom);
