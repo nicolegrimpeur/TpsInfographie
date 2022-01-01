@@ -11,7 +11,7 @@
 - Le fichier index.css comporte les modifications de la page web
 
 - Dans le main.js, vous retrouvez :
-  - Deux variables globales :
+  - Des variables globales :
     - tableauPoint : permet de stocker les points de contrôles
     - formeControle, formeLigne, formeBSpline : qui contiennent les formes à afficher
     - camera : permet de modifier dans tous le fichier js la caméra, permet notamment de modifier le zoom
