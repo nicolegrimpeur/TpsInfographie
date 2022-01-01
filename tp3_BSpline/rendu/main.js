@@ -125,8 +125,10 @@ function deBoorReccur(t, degre, points, noeuds, poids, result) {
 
     // TODO : - Afficher les textes sur la page en cas d'erreur (sur le html ou via une popup erreur)
     //        - Utiliser une fonction template dans laquelle on rentre un texte pour la réutiliser à chaque fois
-    if (degre < 1) throw new Error('Le degré doit être au moins égal à 1');
-    if (degre > (n - 1)) throw new Error('Le degré doit être inférieur ou égal au nombre de points - 1');
+    if (degre < 1)
+        erreur('erreurDegre.html');
+    if (degre > (n - 1))
+        erreur('erreurPoint.html');
 
     if (poids.length === 0) {
         // initialise les poids à 1, s'ils n'ont pas déjà été initialisé
@@ -145,7 +147,8 @@ function deBoorReccur(t, degre, points, noeuds, poids, result) {
     } else {
         // TODO : - Afficher les textes sur la page en cas d'erreur (sur le html ou via une popup erreur)
         //        - Utiliser une fonction template dans laquelle on rentre un texte pour la réutiliser à chaque fois
-        if (noeuds.length !== n + degre + 1) throw new Error('La taille du vecteur de noeud rentré est incorrect');
+        if (noeuds.length !== n + degre + 1)
+            erreur('erreurNoeud.html');
     }
 
     let domaine = [
@@ -332,6 +335,10 @@ function changeAjouter() {
     if(formPoids!==""){
         poids = [formPoids];
     }
+}
+
+function erreur(page){
+    window.open(page,"nom_popup","menubar=no, status=no, scrollbars=no, width=300, height=100, left=300,top=150");
 }
 
 
