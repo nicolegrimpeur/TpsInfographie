@@ -27,9 +27,6 @@ function main() {
     camera.position.set(0, 0, 0);
     camera.lookAt(0, 0, 0);
 
-    // à faire, permettre à l'utilisateur de gérer le dézoom
-    camera.position.z = form.dezoom.value;
-
     const scene = new THREE.Scene();
 
     // couleur et taille de chaque point
@@ -48,10 +45,6 @@ function main() {
 
     // récupère le degré à utiliser sur le formulaire
     let degre = parseInt(form.degre.value);
-
-    // récupère le vecteur noeud sur le formulaire
-    
-    // récupère le poid sur le formulaire
 
     // on ajoute tous les points
     const pointsBSpline = recupPoints(degre, vecteurNoeud, poids);
@@ -161,7 +154,7 @@ function deBoorReccur(t, degre, points, noeuds, poids, result) {
     let max = noeuds[domaine[1]];
     t = t * (max - min) + min;
 
-    if (t < min || t > max) throw new Error('Noeud hors limite');
+    if (t < min || t > max) erreur('Noeud hors limite');
 
     // on cherche le segment de spline cherché s
     let s;
@@ -199,6 +192,11 @@ function deBoorReccur(t, degre, points, noeuds, poids, result) {
     return result;
 }
 
+// affiche un message d'erreur en cas d'erreur
+function erreur(message){
+    alert(message);
+    throw new Error(message);
+}
 
 // permet de dézoomer automatiquement
 function autoZoom(pointsControle) {
@@ -336,11 +334,6 @@ function changeAjouter() {
         poids = [formPoids];
     }
 }
-
-function erreur(message){
-    alert(message);
-}
-
 
 // permet d'afficher les courbes de Béziers en préselection dans le bonus
 function bonus() {
