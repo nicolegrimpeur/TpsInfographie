@@ -104,7 +104,7 @@ function recupPoints(degre, noeuds, poids) {
     const tmpPointsBSplines = [];
     let tmpPoint;
     for (let t = 0; t < 1; t += 0.001) {
-        tmpPoint = deBoorReccur(t, degre, tmpTableauPoint, noeuds, poids);
+        tmpPoint = deBoorReccur(t, degre, tmpTableauPoint);
         tmpPointsBSplines.push(new THREE.Vector3(tmpPoint[0], tmpPoint[1], 0));
     }
 
@@ -112,12 +112,10 @@ function recupPoints(degre, noeuds, poids) {
 }
 
 // algorithme de De Boor
-function deBoorReccur(t, degre, points, noeuds, poids, result) {
+function deBoorReccur(t, degre, points, result) {
     let n = points.length;    // nombre de points
     let d = points[0].length; // dimension des poids (3d ou 2d)
 
-    // TODO : - Afficher les textes sur la page en cas d'erreur (sur le html ou via une popup erreur)
-    //        - Utiliser une fonction template dans laquelle on rentre un texte pour la réutiliser à chaque fois
     if (degre < 1)
         erreur('Le degré doit être au moins égal à 1');
     if (degre > (n - 1))
@@ -129,29 +127,30 @@ function deBoorReccur(t, degre, points, noeuds, poids, result) {
         for (let i = 0; i < n; i++) {
             poids[i] = 1;
         }
+        modifPoidsFromJs();
     }
 
-    if (noeuds.length === 0) {
+    if (vecteurNoeud.length === 0) {
         // construit un vecteur de noeud de taille [n + degre + 1]
-        noeuds = [];
+        vecteurNoeud = [];
         for (let i = 0; i < n + degre + 1; i++) {
-            noeuds[i] = i;
+            vecteurNoeud[i] = i;
         }
+        modifVecteurNoeudFromJs();
     } else {
-        // TODO : - Afficher les textes sur la page en cas d'erreur (sur le html ou via une popup erreur)
-        //        - Utiliser une fonction template dans laquelle on rentre un texte pour la réutiliser à chaque fois
-        if (noeuds.length !== n + degre + 1)
-            erreur("La taille du vecteur de noeud rentré est incorrect");
+        if (vecteurNoeud.length !== n + degre + 1)
+            erreur("La taille du vecteur de noeud rentré est incorrect. \n" +
+                "Elle doit être égal à nombre de point + degre + 1");
     }
 
     let domaine = [
         degre,
-        noeuds.length - 1 - degre
+        vecteurNoeud.length - 1 - degre
     ];
 
     // transforme t sur le domaine de définition de la spline
-    let min = noeuds[domaine[0]];
-    let max = noeuds[domaine[1]];
+    let min = vecteurNoeud[domaine[0]];
+    let max = vecteurNoeud[domaine[1]];
     t = t * (max - min) + min;
 
     if (t < min || t > max) erreur('Noeud hors limite');
@@ -159,7 +158,7 @@ function deBoorReccur(t, degre, points, noeuds, poids, result) {
     // on cherche le segment de spline cherché s
     let s;
     for (s = domaine[0]; s < domaine[1]; s++)
-        if (t >= noeuds[s] && t <= noeuds[s + 1])
+        if (t >= vecteurNoeud[s] && t <= vecteurNoeud[s + 1])
             break;
 
     // on convertit les points pour qu'ils aient chacun des coordonnées homogènes
@@ -175,7 +174,7 @@ function deBoorReccur(t, degre, points, noeuds, poids, result) {
     let alpha;
     for (let l = 1; l <= degre + 1; l++) {
         for (let i = s; i > s - degre - 1 + l; i--) {
-            alpha = (t - noeuds[i]) / (noeuds[i + degre + 1 - l] - noeuds[i]);
+            alpha = (t - vecteurNoeud[i]) / (vecteurNoeud[i + degre + 1 - l] - vecteurNoeud[i]);
 
             // on créé la courbe à partir de chaque composant
             for (let j = 0; j < d + 1; j++)
@@ -193,7 +192,7 @@ function deBoorReccur(t, degre, points, noeuds, poids, result) {
 }
 
 // affiche un message d'erreur en cas d'erreur
-function erreur(message){
+function erreur(message) {
     alert(message);
     throw new Error(message);
 }
@@ -324,15 +323,32 @@ function changeAjouter() {
     if (form.xPointAjout.value !== "" || form.yPointAjout.value !== "")
         btnAjouter.textContent = 'Modifier';
     else btnAjouter.textContent = 'Ajouter';
+}
 
+// modifie le vecteur noeud JS à partir de l'HTML
+function modifVecteurNoeudFromHtml() {
     let noeud = document.getElementById('noeud').value;
-    if(noeud!==0){
-        vecteurNoeud = [noeud];
-    }
-    let formPoids = document.getElementById('formPoids').value;
-    if(formPoids!==""){
-        poids = [formPoids];
-    }
+    let tmpNoeud = "[" + noeud + "]";
+    vecteurNoeud = eval(tmpNoeud);
+    main();
+}
+
+// modifie le vecteur noeud HTML à partir du JS
+function modifVecteurNoeudFromJs() {
+    document.getElementById('noeud').value = String(vecteurNoeud);
+}
+
+// modifie le vecteur poid JS à partir de l'HTML
+function modifPoidsFromHtml() {
+    let formPoids = document.getElementById('poids').value;
+    let tmpPoids = "[" + formPoids + "]";
+    poids = eval(tmpPoids);
+    main();
+}
+
+// modifie le vecteur poid HTML à partir du JS
+function modifPoidsFromJs() {
+    document.getElementById('poids').value = String(poids);
 }
 
 // permet d'afficher les courbes de Béziers en préselection dans le bonus
@@ -352,6 +368,7 @@ function bonus() {
 
         // courbe utilisé pour Béziers pour comparer le résultat
         case 'courbe2':
+            // possibilité de l'écrire sous forme de tableau
             // tableauPoint = [
             //     [0, 0],
             //     [1, 4],
@@ -383,6 +400,8 @@ function bonus() {
     }
 
     form.degre.value = tableauPoint.length - 1;
+    vecteurNoeud = [];
+    poids = [];
 
     allPointSelect();
 

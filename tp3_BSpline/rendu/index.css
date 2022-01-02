@@ -80,7 +80,6 @@ label {
     margin-top: 0 !important;
 }
 
-#noeud, #formPoids{
-    width: 15vw;
+#noeud, #poids{
+    width: 20vw;
 }
-

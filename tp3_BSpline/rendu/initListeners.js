@@ -49,10 +49,27 @@ checkAutoZoom.addEventListener('click', () => {
 });
 
 
-// check autozoom
+// check degre
 let degre = document.getElementById('degre');
 
 // relance le main avec l'autozoom activé ou désactivé
 degre.addEventListener('change', () => {
     main();
+});
+
+
+// check autozoom
+let formNoeuds = document.getElementById('noeud');
+
+// relance le main avec l'autozoom activé ou désactivé
+formNoeuds.addEventListener('change', () => {
+    modifVecteurNoeudFromHtml();
+});
+
+// check autozoom
+let formPoids = document.getElementById('poids');
+
+// relance le main avec l'autozoom activé ou désactivé
+formPoids.addEventListener('change', () => {
+    modifPoidsFromHtml();
 });

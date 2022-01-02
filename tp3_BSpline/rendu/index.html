@@ -51,32 +51,31 @@
         </div>
 
         <div>
+            <button id="ajoutPoint" type="button" class="btn btn-primary">Ajouter</button>
+            <button id="suppressionPoints" type="button" class="btn btn-primary">Supprimer tous les points</button>
+        </div>
+
+        <div>
             <label>
                 Degré
                 <input type="text" class="caseDonnee" name="degre" value="2" id="degre">
             <br>
                 Vecteur nœud
-                <input type="text" class="caseDonnee" name="noeud" value="0" id="noeud">
+                <input type="text" class="caseDonnee" name="noeud" value="" id="noeud">
             <br>
                 Poids
-                <input type="text" class="caseDonnee" name="poids" value="" id="formPoids">
+                <input type="text" class="caseDonnee" name="poids" value="" id="poids">
             </label>
         </div>
 
         <div>
             <label>Courbes de tests :
                 <select id="bonus" name="bonus">
-                    <option value="bonus" selected>Bonus</option>
+                    <option value="bonus" selected></option>
                     <option value="courbe1">Courbe 1</option>
                     <option value="courbe2">Courbe 2</option>
                 </select>
             </label>
-        </div>
-
-
-        <div>
-            <button id="ajoutPoint" type="button" class="btn btn-primary">Ajouter</button>
-            <button id="suppressionPoints" type="button" class="btn btn-primary">Supprimer tous les points</button>
         </div>
     </form>
 </div>
