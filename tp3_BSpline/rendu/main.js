@@ -44,7 +44,7 @@ function main() {
     });
 
     const materialLigne = new THREE.LineBasicMaterial({
-        color: 0xb1b1b1
+        color: 0x515151
     });
 
     // récupère le degré à utiliser sur le formulaire

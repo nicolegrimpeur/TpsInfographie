@@ -40,7 +40,7 @@ const mine = new THREE.GLTFLoader();
 mine.load('./scene/scene.gltf', function ( gltf ) {
     // modification de la position de la map pour qu'elle s'affiche bien sous la clé
     let mineOptions = gltf.scene.children[0];
-    mineOptions.position.set(0, -3.68, 0);
+    mineOptions.position.set(0, -3.67, 0);
     scene.add( gltf.scene );
 }, undefined, function ( error ) {
     console.error( error );

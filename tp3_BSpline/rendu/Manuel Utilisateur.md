@@ -10,9 +10,7 @@
    2) Le bouton AutoZoom vous permet de vous placer directement sur la figure 
    
    3) Dans "Coordonnées du point", vous pouvez rajouter les coordonnées x et y de votre point.
-Cliquez ensuite sur ajouter pour afficher votre point et l'ajouter à la liste de points
-      1) Une fois votre point ajouté, celui-ci sera automatiquement affiché
-      et la courbe bSpline dessiné
+Cliquez ensuite sur ajouter pour l'ajouter à la liste de points
 
    4) Vous pouvez choisir dans la liste de points le point que vous souhaitez Modifier / Supprimer
       

@@ -8,3 +8,5 @@
    1) Vous pouvez zoomer / dézoomer avec la molette de la souris
 
    2) Vous pouvez déplacer la caméra autour de la clé à molette
+
+3) Si la map ne s'affiche pas, faites jouer la caméra avec la molette ou en essayant de vous déplacer, celle ci apparaitra automatiquement
