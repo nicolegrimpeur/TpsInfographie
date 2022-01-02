@@ -7,7 +7,11 @@ let poids = [];        // tableau contenant les poids de chaque points (compris 
 // permet d'initialiser la zone de dessin / supprimer les points
 function initCanva() {
     tableauPoint = [];
-    vecteurNoeud = abSort(tableauPoint);
+    vecteurNoeud = [];
+    poids = [];
+    modifVecteurNoeudFromJs();
+    modifPoidsFromJs();
+
     allPointSelect();
     main();
 }
@@ -47,7 +51,7 @@ function main() {
     let degre = parseInt(form.degre.value);
 
     // on ajoute tous les points
-    const pointsBSpline = recupPoints(degre, vecteurNoeud, poids);
+    const pointsBSpline = recupPoints(degre);
 
     // conversion des points de contrôle à afficher
     let vecteurControle = [];
@@ -79,17 +83,7 @@ function main() {
     renderer.render(scene, camera);
 }
 
-// tri les abscisses des points pour en ressortir un vecteur noeud
-function abSort(pointsControle) {
-    let tabAbscisse = [];
-    for (let i = 0; i < pointsControle.length; i++) {
-        tabAbscisse.push(pointsControle[i].x);
-    }
-    tabAbscisse.sort();
-    return tabAbscisse;
-}
-
-function recupPoints(degre, noeuds, poids) {
+function recupPoints(degre) {
     // si l'on a pas de points, pas la peine de tout faire
     if (tableauPoint.length === 0) return [];
 
@@ -104,7 +98,7 @@ function recupPoints(degre, noeuds, poids) {
     const tmpPointsBSplines = [];
     let tmpPoint;
     for (let t = 0; t < 1; t += 0.001) {
-        tmpPoint = deBoorReccur(t, degre, tmpTableauPoint);
+        tmpPoint = deBoor(t, degre, tmpTableauPoint);
         tmpPointsBSplines.push(new THREE.Vector3(tmpPoint[0], tmpPoint[1], 0));
     }
 
@@ -112,7 +106,7 @@ function recupPoints(degre, noeuds, poids) {
 }
 
 // algorithme de De Boor
-function deBoorReccur(t, degre, points, result) {
+function deBoor(t, degre, points, result) {
     let n = points.length;    // nombre de points
     let d = points[0].length; // dimension des poids (3d ou 2d)
 

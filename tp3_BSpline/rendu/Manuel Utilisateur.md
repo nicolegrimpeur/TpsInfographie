@@ -8,7 +8,6 @@
    1) La zone Dézoom vous permet de manuellement dézoomer la zone pour voir la figure obtenue
    
    2) Le bouton AutoZoom vous permet de vous placer directement sur la figure 
-et de déplacer la caméra pour vous placer directement sur celle-ci
    
    3) Dans "Coordonnées du point", vous pouvez rajouter les coordonnées x et y de votre point.
 Cliquez ensuite sur ajouter pour afficher votre point et l'ajouter à la liste de points
@@ -17,7 +16,16 @@ Cliquez ensuite sur ajouter pour afficher votre point et l'ajouter à la liste d
 
    4) Vous pouvez choisir dans la liste de points le point que vous souhaitez Modifier / Supprimer
       
-   5) Dans "Courbes de tests", vous aurez la possibilité de choisir un ensemble de points parmis deux
+   5) Le bouton "Supprimer tous les points" vous permet de supprimer tous les points affichés 
+
+   6) Vous pouvez changer le degré de la courbe dans l'encadré "Degré"
+
+   7) Vous pouvez modifier le vecteur noeud et le poid dans chaque encadré correspondant
+      1) Celui ci est mis à jour automatiquement dès que vous cherchez à ajouter un point ou une courbe
+      2) Chaque chiffre doit être séparé par une virgule
+      3) Les chiffres décimaux utilisent des points
+
+   8) Dans "Courbes de tests", vous aurez la possibilité de choisir un ensemble de points parmis deux
       1) La première courbe permet de réaliser des tests lors des tracés des courbes bSplines
       2) La deuxième correspond à la courbe 2 du tp2 sur les courbes de Béziers, 
       afin de comparer les résultats obtenus avec les deux méthodes
