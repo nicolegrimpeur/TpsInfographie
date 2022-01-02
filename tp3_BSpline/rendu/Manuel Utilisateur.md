@@ -22,7 +22,7 @@ Cliquez ensuite sur ajouter pour afficher votre point et l'ajouter à la liste d
 
    7) Vous pouvez modifier le vecteur noeud et le poid dans chaque encadré correspondant
       1) Chaque chiffre doit être séparé par une virgule
-      2Les chiffres décimaux utilisent des points
+      2) Les chiffres décimaux utilisent des points
 
    8) Une fois vos modifications effectuées, vous pouvez cliquer sur le bouton "Dessiner" pour afficher vos points et votre courbe 
 
