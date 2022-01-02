@@ -49,16 +49,7 @@ checkAutoZoom.addEventListener('click', () => {
 });
 
 
-// check degre
-let degre = document.getElementById('degre');
-
-// relance le main avec l'autozoom activé ou désactivé
-degre.addEventListener('change', () => {
-    main();
-});
-
-
-// check autozoom
+// à la modification du vecteur de noeud et du poid
 let formNoeuds = document.getElementById('noeud');
 
 // relance le main avec l'autozoom activé ou désactivé
@@ -66,10 +57,18 @@ formNoeuds.addEventListener('change', () => {
     modifVecteurNoeudFromHtml();
 });
 
-// check autozoom
 let formPoids = document.getElementById('poids');
 
 // relance le main avec l'autozoom activé ou désactivé
 formPoids.addEventListener('change', () => {
     modifPoidsFromHtml();
+});
+
+
+// gère le click sur le bouton dessiner
+let dessine = document.getElementById('dessiner');
+
+// relance le main avec l'autozoom activé ou désactivé
+dessine.addEventListener('click', () => {
+    draw();
 });

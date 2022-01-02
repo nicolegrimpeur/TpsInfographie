@@ -250,8 +250,6 @@ function ajout() {
     }
 
     allPointSelect();
-
-    main();
 }
 
 
@@ -264,8 +262,6 @@ function removePointSelect() {
     }
 
     allPointSelect();
-
-    main();
 }
 
 
@@ -324,7 +320,6 @@ function modifVecteurNoeudFromHtml() {
     let noeud = document.getElementById('noeud').value;
     let tmpNoeud = "[" + noeud + "]";
     vecteurNoeud = eval(tmpNoeud);
-    main();
 }
 
 // modifie le vecteur noeud HTML à partir du JS
@@ -337,12 +332,17 @@ function modifPoidsFromHtml() {
     let formPoids = document.getElementById('poids').value;
     let tmpPoids = "[" + formPoids + "]";
     poids = eval(tmpPoids);
-    main();
 }
 
 // modifie le vecteur poid HTML à partir du JS
 function modifPoidsFromJs() {
     document.getElementById('poids').value = String(poids);
+}
+
+function draw() {
+    modifVecteurNoeudFromHtml();
+    modifPoidsFromHtml();
+    main();
 }
 
 // permet d'afficher les courbes de Béziers en préselection dans le bonus

@@ -21,12 +21,14 @@ Cliquez ensuite sur ajouter pour afficher votre point et l'ajouter à la liste d
    6) Vous pouvez changer le degré de la courbe dans l'encadré "Degré"
 
    7) Vous pouvez modifier le vecteur noeud et le poid dans chaque encadré correspondant
-      1) Celui ci est mis à jour automatiquement dès que vous cherchez à ajouter un point ou une courbe
-      2) Chaque chiffre doit être séparé par une virgule
-      3) Les chiffres décimaux utilisent des points
+      1) Chaque chiffre doit être séparé par une virgule
+      2Les chiffres décimaux utilisent des points
+
+   8) Une fois vos modifications effectuées, vous pouvez cliquer sur le bouton "Dessiner" pour afficher vos points et votre courbe 
 
    8) Dans "Courbes de tests", vous aurez la possibilité de choisir un ensemble de points parmis deux
       1) La première courbe permet de réaliser des tests lors des tracés des courbes bSplines
       2) La deuxième correspond à la courbe 2 du tp2 sur les courbes de Béziers, 
       afin de comparer les résultats obtenus avec les deux méthodes
       3) Les points ajoutés sont ensuite modifiables si souhaité
+
